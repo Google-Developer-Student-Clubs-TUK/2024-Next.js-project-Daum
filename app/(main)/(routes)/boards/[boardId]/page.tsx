@@ -26,7 +26,9 @@ const BoardIdPage = ({ params }: BoardIdPageProps) => {
   
   return (
     <div>
-      <div>{board.title}</div>
+      <div className="pb-[11.5px] text-5xl font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] p-4">
+        {board.title}
+      </div>
       <BoardView
         onChange={() => {}}
         initialContent={board.content}
