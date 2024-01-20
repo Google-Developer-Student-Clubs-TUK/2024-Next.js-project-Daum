@@ -36,5 +36,4 @@ yarn-error.log*
 next-env.d.ts
 
 # convex auth / generate files
-convex/auth.config.js
 convex/_generated/*
