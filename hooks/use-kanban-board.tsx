@@ -1,3 +1,4 @@
+import { Id } from "@/convex/_generated/dataModel";
 import { KanbanBoard, generateId, newKanbanBoard } from "@/types/kanbanboard"
 import { useEffect, useState } from "react"
 
@@ -6,6 +7,7 @@ export interface KanbanBoardProps {
   onNewElement: () => void;
   onRemoveElement: (id: string) => void;
   onRenameElement: (id: string, name: string) => void;
+  onAddDocument: (id: string, document: Id<"documents">) => void;
 }
 
 export const useKanbanBoard = ({
@@ -56,10 +58,20 @@ export const useKanbanBoard = ({
     )
   }
 
+  const onAddDocument = (id: string, document: Id<"documents">) => {
+    setContent( prev =>
+      prev?.map(a => a.content.includes(document) ? {...a, content: a.content.filter( b => b !== document )} : a)
+    )
+    setContent( prev =>
+      prev?.map(a => a._id === id ? {...a, content: [...a.content, document]} : a)
+    )
+  }
+
   return {
     content,
     onNewElement,
     onRemoveElement,
     onRenameElement,
+    onAddDocument,
   }
 }

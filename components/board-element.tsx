@@ -8,13 +8,18 @@ import TextareaAutoSize from "react-textarea-autosize";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
-import { Plus, Settings, Trash } from "lucide-react";
+import { Plus, Search, Settings, Trash } from "lucide-react";
 import { BoardDocument } from "./board-document";
+import { Input } from "./ui/input";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export const BoardElement = ({
   editor: { 
     onRenameElement,
-    onRemoveElement
+    onRemoveElement,
+
+    onAddDocument,
   },
   element: {
     name,
@@ -31,8 +36,16 @@ export const BoardElement = ({
   },
   editable?: boolean,
 }) => {
+  const documents = useQuery(api.documents.getSearch, {});
+
   const inputRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
+
+  const [search, setSearch] = useState("");
+
+  const filteredDocuments = documents?.filter((document) => {
+    return document.title.toLowerCase().includes(search.toLowerCase());
+  })
 
   const enableInput = () => {
     if (!editable) return;
@@ -122,7 +135,33 @@ export const BoardElement = ({
               className="p-0 w-48"
               side="bottom"
             >
-              <div>Add...</div>
+              <div className="flex items-center gap-x-1 p-2">
+                <Search className="h-4 w-4" />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="h-7 px-2 focus-visible:ring-transparent bg-secondary"
+                  placeholder="Filter by title..."
+                />
+              </div>
+              <div className="m-2">
+                <p className="hidden last:block text-xs text-center text-muted-foreground pb-2">
+                  No documents found.
+                </p>
+                {filteredDocuments?.map((document) => (
+                  <div
+                    role="button"
+                    className="flex text-sm rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600 text-nowrap text-ellipsis overflow-hidden"
+                    key={document._id}
+                    onClick={() => onAddDocument(_id, document._id)}
+                  >
+                      {document.icon && (
+                        <div className="shrink-0 mr-2 text-[18px]">{document.icon}</div>
+                      )}
+                      {document.title}
+                  </div>
+                ))}
+              </div>
             </PopoverContent>
           </Popover>
         </div>
