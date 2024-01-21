@@ -2,6 +2,7 @@ import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
+import { newKanbanBoard } from "./_templates";
 
 export const create = mutation({
   args: {
@@ -16,20 +17,11 @@ export const create = mutation({
 
     const userId = identity.subject;
 
-    const defaultContent = [
-      {
-        name: "To Do",
-        contents: [],
-      },
-      {
-        name: "In Progress",
-        contents: [],
-      },
-      {
-        name: "Done",
-        contents: [],
-      },
-    ];
+    const defaultContent = newKanbanBoard(
+      "To Do",
+      "In Progress",
+      "Done"
+    );
 
     const board = await ctx.db.insert("boards", {
       title: args.title,
