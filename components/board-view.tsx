@@ -33,11 +33,13 @@ const BoardView = ({
         />
       ))}
       <div
-        className="min-h-full w-64 ml-2 p-2 rounded-md border-2 border-dashed flex justify-center items-center shrink-[3]"
+        className="flex flex-col h-min w-64 ml-2 p-2 rounded-md border-2 border-dashed justify-center items-center shrink-[3]"
         role="button"
         onClick={editor.onNewElement}
       >
-        <PlusCircle className="w-8 h-8 text-neutral-200"/>
+        <div className="h-80 flex justify-center items-center">
+          <PlusCircle className="w-8 h-8 text-neutral-200"/>
+        </div>
       </div>
     </div>
   )

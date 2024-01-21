@@ -70,7 +70,7 @@ export const BoardElement = ({
   }
 
   return (
-    <div className="min-h-full w-64 min-w-48 ml-2 p-2 rounded-md bg-neutral-100 dark:bg-neutral-800 shrink-[0.5]">
+    <div className="flex flex-col h-min w-64 min-w-48 ml-2 p-2 rounded-md bg-neutral-100 dark:bg-neutral-800 shrink-[0.5]">
       <div className="mb-8 flex justify-between items-center">
         { isEditing && editable ? (
           <TextareaAutoSize
@@ -166,13 +166,19 @@ export const BoardElement = ({
           </Popover>
         </div>
       </div>
-      {content && content.length > 0 ? content.map(i => (
-        <BoardDocument key={i} />
-      )) : (
-        <div className="flex flex-col items-center justify-center w-full h-48 text-muted-foreground">
-          No documents.
-        </div>
-      )}
+      <div className="flex flex-col min-h-64 space-y-2">
+        {content && content.length > 0 ? content.map(i => (
+          <BoardDocument 
+            key={i}
+            id={i}
+            editable={editable}
+          />
+        )) : (
+          <div className="flex flex-col items-center justify-center w-full text-muted-foreground">
+            No documents.
+          </div>
+        )}
+      </div>
     </div>
   )
 }
