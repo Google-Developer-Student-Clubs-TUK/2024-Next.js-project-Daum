@@ -37,8 +37,15 @@ export const useKanbanBoard = ({
     }
   }
 
+  const onRemoveElement = (id: string) => {
+    setContent(
+      content?.filter(a => a._id !== id)
+    );
+  }
+
   return {
     content,
     onNewElement,
+    onRemoveElement,
   }
 }
