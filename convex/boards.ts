@@ -3,6 +3,34 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
 
+export const archive = mutation({
+  args: { id: v.id("boards") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const userId = identity.subject;
+
+    const existingBoard = await ctx.db.get(args.id);
+
+    if (!existingBoard) {
+      throw new Error("Not found");
+    }
+    
+    if (existingBoard.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const board = await ctx.db.patch(args.id, {
+      isArchived: true,
+    });
+
+    return board;
+  }
+})
 export const create = mutation({
   args: {
     title: v.string(),
@@ -57,7 +85,7 @@ export const getById = query({
 });
 
 export const getSidebar = query({
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
@@ -146,3 +174,80 @@ export const removeIcon = mutation({
     return board;
   },
 });
+
+export const getTrash = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const userId = identity.subject;
+
+    const boards = await ctx.db
+      .query("boards")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("isArchived"), true))
+      .order("desc")
+      .collect();
+
+    return boards;
+  },
+});
+
+export const restore = mutation({
+  args: { id: v.id("boards") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const userId = identity.subject;
+
+    const existingBoard = await ctx.db.get(args.id);
+
+    if (!existingBoard) {
+      throw new Error("Not found");
+    }
+    
+    if (existingBoard.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const board = await ctx.db.patch(args.id, {
+      isArchived: false,
+    });
+
+    return board;
+  },
+});
+
+export const remove = mutation({
+  args: { id: v.id("boards") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const userId = identity.subject;
+
+    const existingBoard = await ctx.db.get(args.id);
+
+    if (!existingBoard) {
+      throw new Error("Not found");
+    }
+    
+    if (existingBoard.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const board = await ctx.db.delete(args.id);
+    
+    return board;
+  }
+})

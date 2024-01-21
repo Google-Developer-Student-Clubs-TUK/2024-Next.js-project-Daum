@@ -5,6 +5,7 @@ import { useQuery } from "convex/react";
 import { useParams, useRouter } from "next/navigation";
 import { Item } from "./item";
 import { FileIcon } from "lucide-react";
+import { BoardItem } from "./board-item";
 
 export const BoardList = () => {
   const params = useParams();
@@ -18,9 +19,9 @@ export const BoardList = () => {
   if (boards === undefined) {
     return (
       <>
-        <Item.Skeleton />
-        <Item.Skeleton />
-        <Item.Skeleton />
+        <BoardItem.Skeleton />
+        <BoardItem.Skeleton />
+        <BoardItem.Skeleton />
       </>
     );
   }
@@ -29,11 +30,12 @@ export const BoardList = () => {
     <>
     {boards.map((board) => (
       <div key={board._id}>
-        <Item
+        <BoardItem
+          id={board._id}
           onClick={() => onRedirect(board._id)}
           label={board.title}
           icon={FileIcon}
-          documentIcon={board.icon}
+          boardIcon={board.icon}
           active={params.boardId === board._id}
         />
       </div>
