@@ -5,7 +5,7 @@ import BoardView from "@/components/board-view";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 
 interface BoardIdPageProps {
   params: {
@@ -17,6 +17,7 @@ const BoardIdPage = ({ params }: BoardIdPageProps) => {
   const board = useQuery(api.boards.getById, {
     boardId: params.boardId
   });
+  const update = useMutation(api.boards.update);
 
   if (board === undefined) {
     return (
@@ -34,11 +35,19 @@ const BoardIdPage = ({ params }: BoardIdPageProps) => {
   if (board === null) {
     return <div>Not found</div>;
   }
+
+  const onUpdate = (value: string) => {
+    update({
+      id: params.boardId,
+      content: value
+    });
+  }
+
   return (
     <div>
       <BoardToolbar initialData={board}/>
       <BoardView
-        onChange={() => {}}
+        onChange={onUpdate}
         initialContent={board.content}
         editable={true}
       />

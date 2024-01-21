@@ -1,9 +1,10 @@
 "use client";
 
 import { useKanbanBoard } from "@/hooks/use-kanban-board";
-import { Plus, Settings } from "lucide-react";
+import { Plus, PlusCircle, Settings } from "lucide-react";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 const BoardView = ({
   onChange,
@@ -23,14 +24,17 @@ const BoardView = ({
   });
 
   return (
-    <div className="flex overflow-auto m-4 min-h-80">
+    <div className="flex overflow-x-auto m-4 min-h-80">
       {kanbanBoard.content && kanbanBoard.content.map(v => (
-        <div key={v.name} className="min-h-full w-64 min-w-32 ml-2 p-2 rounded-md bg-neutral-100 dark:bg-neutral-800">
+        <div key={v.name} className="min-h-full w-64 min-w-48 ml-2 p-2 rounded-md bg-neutral-100 dark:bg-neutral-800 shrink-[0.5]">
           <div className="mb-8 flex justify-between items-center">
             <div className="text-xl text-nowrap text-ellipsis overflow-hidden">
               {v.name}
             </div>
-            <div className="flex">
+            <div className={cn(
+              "hidden",
+              editable && "flex",
+            )}>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -78,6 +82,13 @@ const BoardView = ({
           )}
         </div>
       ))}
+      <div
+        className="min-h-full w-64 ml-2 p-2 rounded-md border-2 border-dashed flex justify-center items-center shrink-[3]"
+        role="button"
+        onClick={kanbanBoard.onNewElement}
+      >
+        <PlusCircle className="w-8 h-8 text-neutral-200"/>
+      </div>
     </div>
   )
 }

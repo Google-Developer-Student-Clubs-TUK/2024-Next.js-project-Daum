@@ -1,4 +1,4 @@
-import { KanbanBoard, newKanbanBoard } from "@/types/kanbanboard"
+import { KanbanBoard, generateId, newKanbanBoard } from "@/types/kanbanboard"
 import { useEffect, useState } from "react"
 
 export const useKanbanBoard = ({
@@ -17,8 +17,28 @@ export const useKanbanBoard = ({
       setContent(newKanbanBoard());
     }
   }, [content]);
-  
+
+  useEffect(() => {
+    if (content !== undefined) {
+      onBoardChanged(content);
+    }
+  }, [content, onBoardChanged]);
+
+  const onNewElement = () => {
+    if (content !== undefined) {
+      setContent([
+        ...content,
+        {
+          _id: generateId(),
+          name: "untitled",
+          content: []
+        }
+      ])
+    }
+  }
+
   return {
-    content
+    content,
+    onNewElement,
   }
 }
