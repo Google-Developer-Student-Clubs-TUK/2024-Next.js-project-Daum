@@ -1,6 +1,13 @@
 import { KanbanBoard, generateId, newKanbanBoard } from "@/types/kanbanboard"
 import { useEffect, useState } from "react"
 
+export interface KanbanBoardProps {
+  content: KanbanBoard | undefined;
+  onNewElement: () => void;
+  onRemoveElement: (id: string) => void;
+  onRenameElement: (id: string, name: string) => void;
+}
+
 export const useKanbanBoard = ({
   editable,
   initialContent,
@@ -9,7 +16,7 @@ export const useKanbanBoard = ({
   editable?: boolean,
   initialContent?: KanbanBoard | undefined
   onBoardChanged: (value: KanbanBoard) => void
-}) => {
+}): KanbanBoardProps => {
   const [content, setContent] = useState(initialContent);
 
   useEffect(() => {
