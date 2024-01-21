@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { useKanbanBoard } from "@/hooks/use-kanban-board";
-import { Plus, PlusCircle, Settings, Trash } from "lucide-react";
+import TextareaAutoSize from "react-textarea-autosize";
 import { Button } from "./ui/button";
+import { Plus, PlusCircle, Settings, Trash } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
@@ -15,10 +17,12 @@ const BoardView = ({
   initialContent?: string,
   editable?: boolean
 }) => {
+  const [editElement, setEditElement] = useState("");
   const { 
     content,
     onNewElement,
     onRemoveElement,
+    onRenameElement,
   } = useKanbanBoard({
     editable,
     initialContent: initialContent ? JSON.parse(initialContent) : undefined,
@@ -27,14 +31,49 @@ const BoardView = ({
     }
   });
 
+  const enableInput = (id: string) => {
+    if (!editable) return;
+
+    setEditElement(id);
+  }
+
+  const disableInput = () => setEditElement("");
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      disableInput();
+    }
+  }
+
+  const onInput = (id: string, value: string) => {
+    onRenameElement(id, value);
+  }
+
   return (
     <div className="flex overflow-x-auto m-4 min-h-80">
       {content && content.map(v => (
         <div key={v._id} className="min-h-full w-64 min-w-48 ml-2 p-2 rounded-md bg-neutral-100 dark:bg-neutral-800 shrink-[0.5]">
           <div className="mb-8 flex justify-between items-center">
-            <div className="text-xl text-nowrap text-ellipsis overflow-hidden">
-              {v.name}
-            </div>
+            { editElement === v._id && editable ? (
+              <TextareaAutoSize
+                autoFocus
+                onBlur={disableInput}
+                onKeyDown={onKeyDown}
+                value={v.name}
+                onChange={(e) => onInput(v._id, e.target.value)}
+                className="text-xl text-nowrap resize-none overflow-hidden"
+                maxRows={1}
+              />
+            ) : (
+              <div
+                onClick={() => enableInput(v._id)}
+                className="text-xl text-nowrap text-ellipsis overflow-hidden"
+              >
+                {v.name}
+              </div>
+            )}
+            
             <div className={cn(
               "hidden",
               editable && "flex",

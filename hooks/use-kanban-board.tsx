@@ -43,9 +43,16 @@ export const useKanbanBoard = ({
     );
   }
 
+  const onRenameElement = (id: string, name: string) => {
+    setContent(
+      content?.map(a => a._id === id ? {...a, name} : a)
+    )
+  }
+
   return {
     content,
     onNewElement,
     onRemoveElement,
+    onRenameElement,
   }
 }
