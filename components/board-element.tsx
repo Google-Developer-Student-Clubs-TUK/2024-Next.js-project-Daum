@@ -69,8 +69,25 @@ export const BoardElement = ({
     onRenameElement(id, value);
   }
 
+  const onDragOver = (e: React.DragEvent) => {
+    if (e.dataTransfer.types[0] === "documentid") {
+      e.preventDefault();
+    }
+  }
+
+  const onDrop = (e: React.DragEvent) => {
+    if (e.dataTransfer.types[0] === "documentid") {
+      const documentId = e.dataTransfer.getData("documentid") as Id<"documents">;
+      onAddDocument(_id, documentId);
+    }
+  }
+
   return (
-    <div className="flex flex-col h-min w-64 min-w-48 ml-2 p-2 rounded-md bg-neutral-100 dark:bg-neutral-800 shrink-[0.5]">
+    <div
+      className="flex flex-col h-min w-64 min-w-48 ml-2 p-2 rounded-md bg-neutral-100 dark:bg-neutral-800 shrink-[0.5]"
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+    >
       <div className="mb-8 flex justify-between items-center">
         { isEditing && editable ? (
           <TextareaAutoSize

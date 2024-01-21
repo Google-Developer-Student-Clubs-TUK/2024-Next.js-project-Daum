@@ -26,6 +26,7 @@ export const BoardDocument = ({
     <div
       className="w-full h-16 bg-green-200 dark:bg-green-700 rounded-md" 
       draggable={editable}
+      onDragStart={(e) => e.dataTransfer.setData("documentid", id)}
     >
       <div className="m-2 text-foreground">
         {document?.title}
