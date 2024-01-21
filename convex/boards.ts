@@ -40,7 +40,7 @@ export const create = mutation({
     });
 
     return board;
-  }
+  },
 });
 
 export const getById = query({
@@ -69,7 +69,7 @@ export const getById = query({
     }
 
     return board;
-  }
+  },
 });
 
 export const getSidebar = query({
@@ -92,5 +92,73 @@ export const getSidebar = query({
       .collect();
 
     return boards;
-  }
-})
+  },
+});
+
+export const update = mutation({
+  args: {
+    id: v.id("boards"),
+    title: v.optional(v.string()),
+    content: v.optional(v.string()),
+    icon: v.optional(v.string()),
+    isPublished: v.optional(v.boolean()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+    
+    const userId = identity.subject;
+
+    const { id, ...rest } = args;
+
+    const existingBoard = await ctx.db.get(args.id);
+
+    if (!existingBoard) {
+      throw new Error("Not found");
+    }
+
+    if (existingBoard.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const board = await ctx.db.patch(args.id, {
+      ...rest,
+    });
+
+    return board;
+  },
+});
+
+export const removeIcon = mutation({
+  args: {
+    id: v.id("boards"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+    
+    const userId = identity.subject;
+
+    const existingBoard = await ctx.db.get(args.id);
+
+    if (!existingBoard) {
+      throw new Error("Not found");
+    }
+
+    if (existingBoard.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const board = await ctx.db.patch(args.id, {
+      icon: undefined,
+    });
+
+    return board;
+  },
+});

@@ -1,5 +1,6 @@
 "use client";
 
+import { BoardToolbar } from "@/components/board-toolbar";
 import BoardView from "@/components/board-view";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -26,9 +27,7 @@ const BoardIdPage = ({ params }: BoardIdPageProps) => {
   
   return (
     <div>
-      <div className="pb-[11.5px] text-5xl font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] p-4">
-        {board.title}
-      </div>
+      <BoardToolbar initialData={board}/>
       <BoardView
         onChange={() => {}}
         initialContent={board.content}
