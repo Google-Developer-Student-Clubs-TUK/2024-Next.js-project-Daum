@@ -71,9 +71,9 @@ const BoardView = ({
               </Popover>
             </div>
           </div>
-          {v.content ? v.content.map(i => (
+          {v.content && v.content.length > 0 ? v.content.map(i => (
             <div key={i}>
-
+                
             </div>
           )) : (
             <div className="flex flex-col items-center justify-center w-full h-48 text-muted-foreground">
