@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { ElementRef, useRef, useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { KanbanBoardProps } from "@/hooks/use-kanban-board";
 import TextareaAutoSize from "react-textarea-autosize";
@@ -31,15 +31,19 @@ export const BoardElement = ({
   },
   editable?: boolean,
 }) => {
-  const [editElement, setEditElement] = useState("");
+  const inputRef = useRef<ElementRef<"textarea">>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-  const enableInput = (id: string) => {
+  const enableInput = () => {
     if (!editable) return;
 
-    setEditElement(id);
+    setIsEditing(true);
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
   }
 
-  const disableInput = () => setEditElement("");
+  const disableInput = () => setIsEditing(false);
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter") {
@@ -55,9 +59,9 @@ export const BoardElement = ({
   return (
     <div className="min-h-full w-64 min-w-48 ml-2 p-2 rounded-md bg-neutral-100 dark:bg-neutral-800 shrink-[0.5]">
           <div className="mb-8 flex justify-between items-center">
-            { editElement === _id && editable ? (
+            { isEditing && editable ? (
               <TextareaAutoSize
-                autoFocus
+                ref={inputRef}
                 onBlur={() => { disableInput(); }}
                 onKeyDown={(e) => { onKeyDown(e); }}
                 value={name}
@@ -67,7 +71,7 @@ export const BoardElement = ({
               />
             ) : (
               <div
-                onClick={() => enableInput(_id)}
+                onClick={() => enableInput()}
                 className="text-xl text-nowrap text-ellipsis overflow-hidden"
               >
                 {name}
