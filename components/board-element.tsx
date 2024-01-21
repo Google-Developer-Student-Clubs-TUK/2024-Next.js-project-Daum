@@ -15,12 +15,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 export const BoardElement = ({
-  editor: { 
-    onRenameElement,
-    onRemoveElement,
-
-    onAddDocument,
-  },
+  editor,
   element: {
     name,
     _id,
@@ -46,6 +41,12 @@ export const BoardElement = ({
   const filteredDocuments = documents?.filter((document) => {
     return document.title.toLowerCase().includes(search.toLowerCase());
   })
+  const { 
+    onRenameElement,
+    onRemoveElement,
+
+    onAddDocument,
+  } = editor;
 
   const enableInput = () => {
     if (!editable) return;
@@ -79,6 +80,8 @@ export const BoardElement = ({
     if (e.dataTransfer.types[0] === "documentid") {
       const documentId = e.dataTransfer.getData("documentid") as Id<"documents">;
       onAddDocument(_id, documentId);
+
+      e.stopPropagation();
     }
   }
 
@@ -187,8 +190,10 @@ export const BoardElement = ({
         {content && content.length > 0 ? content.map(i => (
           <BoardDocument 
             key={i}
+            _id={_id}
             id={i}
             editable={editable}
+            editor={editor}
           />
         )) : (
           <div className="flex flex-col items-center justify-center w-full text-muted-foreground">

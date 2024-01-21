@@ -8,6 +8,7 @@ export interface KanbanBoardProps {
   onRemoveElement: (id: string) => void;
   onRenameElement: (id: string, name: string) => void;
   onAddDocument: (id: string, document: Id<"documents">) => void;
+  onAddDocumentIndex: (id: string, document: Id<"documents">, forward: Id<"documents">) => void,
 }
 
 export const useKanbanBoard = ({
@@ -59,12 +60,26 @@ export const useKanbanBoard = ({
   }
 
   const onAddDocument = (id: string, document: Id<"documents">) => {
-    setContent( prev =>
+    setContent(prev =>
       prev?.map(a => a.content.includes(document) ? {...a, content: a.content.filter( b => b !== document )} : a)
     )
-    setContent( prev =>
+    setContent(prev =>
       prev?.map(a => a._id === id ? {...a, content: [...a.content, document]} : a)
     )
+  }
+  
+  const onAddDocumentIndex = (id: string, document: Id<"documents">, forward: Id<"documents">) => {
+    const newContent = content?.map(a => a.content.includes(document) ? {...a, content: a.content.filter( b => b !== document )} : a);
+    if (!!newContent) {
+      const index = newContent.filter(a => a._id === id)[0].content.indexOf(forward);
+
+      setContent( 
+        newContent?.map(a => a._id === id ? {...a, content: [
+          ...a.content.slice(0, index),
+          document,
+          ...a.content.slice(index)
+        ]} : a));
+    }
   }
 
   return {
@@ -73,5 +88,6 @@ export const useKanbanBoard = ({
     onRemoveElement,
     onRenameElement,
     onAddDocument,
+    onAddDocumentIndex,
   }
 }
