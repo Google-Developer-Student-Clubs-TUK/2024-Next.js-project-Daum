@@ -1,5 +1,5 @@
-import { KanbanBoard } from "@/types/kanbanboard"
-import { useState } from "react"
+import { KanbanBoard, newKanbanBoard } from "@/types/kanbanboard"
+import { useEffect, useState } from "react"
 
 export const useKanbanBoard = ({
   editable,
@@ -12,6 +12,12 @@ export const useKanbanBoard = ({
 }) => {
   const [content, setContent] = useState(initialContent);
 
+  useEffect(() => {
+    if (content === undefined) {
+      setContent(newKanbanBoard());
+    }
+  }, [content]);
+  
   return {
     content
   }
