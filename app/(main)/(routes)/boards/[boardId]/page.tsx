@@ -2,6 +2,7 @@
 
 import { BoardToolbar } from "@/components/board-toolbar";
 import BoardView from "@/components/board-view";
+import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
@@ -19,12 +20,20 @@ const BoardIdPage = ({ params }: BoardIdPageProps) => {
 
   if (board === undefined) {
     return (
-      <nav className="bg-background dark:bg-[#1F1F1F] px-3 py-2 w-full flex items-center justify-between">
-      
-      </nav>
+      <div className="p-4">
+        <Skeleton className="h-16 w-64" />
+        <div className="flex space-x-2 pt-4 pl-2">
+          <Skeleton className="h-80 w-64" />
+          <Skeleton className="h-96 w-64" />
+          <Skeleton className="h-80 w-64" />
+        </div>
+      </div>
     )
   }
   
+  if (board === null) {
+    return <div>Not found</div>;
+  }
   return (
     <div>
       <BoardToolbar initialData={board}/>
