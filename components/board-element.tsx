@@ -58,82 +58,82 @@ export const BoardElement = ({
 
   return (
     <div className="min-h-full w-64 min-w-48 ml-2 p-2 rounded-md bg-neutral-100 dark:bg-neutral-800 shrink-[0.5]">
-          <div className="mb-8 flex justify-between items-center">
-            { isEditing && editable ? (
-              <TextareaAutoSize
-                ref={inputRef}
-                onBlur={() => { disableInput(); }}
-                onKeyDown={(e) => { onKeyDown(e); }}
-                value={name}
-                onChange={(e) => onInput(_id, e.target.value)}
-                className="text-xl text-nowrap resize-none overflow-hidden"
-                maxRows={1}
-              />
-            ) : (
-              <div
-                onClick={() => enableInput()}
-                className="text-xl text-nowrap text-ellipsis overflow-hidden"
-              >
-                {name}
-              </div>
-            )}
-            
-            <div className={cn(
-              "hidden",
-              editable && "flex",
-            )}>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    size='sm'
-                    variant="ghost"
-                    className="hover:bg-neutral-200 dark:hover:bg-neutral-600 flex-1"
-                  >
-                    <Settings className="w-4 h-4 text-muted-foreground" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="p-0 w-48"
-                  side="bottom"
-                >
-                  <div className="p-1">
-                    <Button
-                      variant="ghost"
-                      className="w-full flex justify-start"
-                      onClick={() => onRemoveElement(_id)}
-                    >
-                      <Trash className="h-4 w-4 mr-2" />
-                      Delete
-                    </Button>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    size='sm'
-                    variant="ghost"
-                    className="hover:bg-neutral-200 dark:hover:bg-neutral-600 flex-1"
-                  >
-                    <Plus className="w-4 h-4 text-muted-foreground" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="p-0 w-48"
-                  side="bottom"
-                >
-                  <div>Add...</div>
-                </PopoverContent>
-              </Popover>
-            </div>
+      <div className="mb-8 flex justify-between items-center">
+        { isEditing && editable ? (
+          <TextareaAutoSize
+            ref={inputRef}
+            onBlur={() => { disableInput(); }}
+            onKeyDown={(e) => { onKeyDown(e); }}
+            value={name}
+            onChange={(e) => onInput(_id, e.target.value)}
+            className="text-xl text-nowrap resize-none overflow-hidden"
+            maxRows={1}
+          />
+        ) : (
+          <div
+            onClick={() => enableInput()}
+            className="text-xl text-nowrap text-ellipsis overflow-hidden"
+          >
+            {name}
           </div>
-          {content && content.length > 0 ? content.map(i => (
-            <BoardDocument key={i} />
-          )) : (
-            <div className="flex flex-col items-center justify-center w-full h-48 text-muted-foreground">
-              No documents.
-            </div>
-          )}
+        )}
+
+        <div className={cn(
+          "hidden",
+          editable && "flex",
+        )}>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                size='sm'
+                variant="ghost"
+                className="hover:bg-neutral-200 dark:hover:bg-neutral-600 flex-1"
+              >
+                <Settings className="w-4 h-4 text-muted-foreground" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="p-0 w-48"
+              side="bottom"
+            >
+              <div className="p-1">
+                <Button
+                  variant="ghost"
+                  className="w-full flex justify-start"
+                  onClick={() => onRemoveElement(_id)}
+                >
+                  <Trash className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                size='sm'
+                variant="ghost"
+                className="hover:bg-neutral-200 dark:hover:bg-neutral-600 flex-1"
+              >
+                <Plus className="w-4 h-4 text-muted-foreground" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="p-0 w-48"
+              side="bottom"
+            >
+              <div>Add...</div>
+            </PopoverContent>
+          </Popover>
         </div>
+      </div>
+      {content && content.length > 0 ? content.map(i => (
+        <BoardDocument key={i} />
+      )) : (
+        <div className="flex flex-col items-center justify-center w-full h-48 text-muted-foreground">
+          No documents.
+        </div>
+      )}
+    </div>
   )
 }
