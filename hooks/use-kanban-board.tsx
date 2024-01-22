@@ -8,9 +8,12 @@ export interface KanbanBoardProps {
   onRemoveElement: (id: string) => void;
   onRenameElement: (id: string, name: string) => void;
   onMoveElement: (id: string, forward?: string) => void;
+  onElementSetColor: (id: string, color: {light: string, dark: string}) => void;
+
   onAddDocument: (id: string, document: Id<"documents">) => void;
   onAddDocumentIndex: (id: string, document: Id<"documents">, forward: Id<"documents">) => void,
   onRemoveDocument: (document: Id<"documents">) => void;
+  onDocumentSetColor: (Document: Id<"documents">, color: {light: string, dark: string} | undefined) => void;
 }
 
 export const useKanbanBoard = ({
@@ -35,16 +38,15 @@ export const useKanbanBoard = ({
   }, [content, onBoardChanged]);
 
   const onNewElement = () => {
-    if (content !== undefined) {
-      setContent([
-        ...content,
-        {
-          _id: generateId(),
-          name: "untitled",
-          content: []
-        }
-      ])
-    }
+    if (content === undefined) return;
+    setContent([
+      ...content,
+      {
+        _id: generateId(),
+        name: "untitled",
+        content: []
+      }
+    ]);
   }
 
   const onRemoveElement = (id: string) => {
@@ -60,26 +62,34 @@ export const useKanbanBoard = ({
   }
 
   const onMoveElement = (id: string, forward?: string) => {
-    if (content !== undefined) {
-      const element = content.filter(a => a._id === id)[0];
-      const newContent = content.filter(a => a._id !== id);
-      if (forward !== undefined) {
-        const fwdElement = content.filter(a => a._id === forward)[0];
-        const index = newContent.indexOf(fwdElement);
+    if (content === undefined) return;
 
-        setContent([
-          ...newContent.slice(0, index),
-          element,
-          ...newContent.slice(index)
-        ]);
-      }
-      else {
-        setContent([
-          ...newContent,
-          element
-        ]);
-      }
+    const element = content.filter(a => a._id === id)[0];
+    const newContent = content.filter(a => a._id !== id);
+    if (forward !== undefined) {
+      const fwdElement = content.filter(a => a._id === forward)[0];
+      const index = newContent.indexOf(fwdElement);
+
+      setContent([
+        ...newContent.slice(0, index),
+        element,
+        ...newContent.slice(index)
+      ]);
     }
+    else {
+      setContent([
+        ...newContent,
+        element
+      ]);
+    }
+  }
+
+  const onElementSetColor = (id: string, color: {light: string, dark: string}) => {
+    if (content === undefined) return;
+
+    setContent(
+      content.map(a => a._id === id ? {...a, color} : a)
+    );
   }
 
   const onAddDocument = (id: string, document: Id<"documents">) => {
@@ -97,8 +107,6 @@ export const useKanbanBoard = ({
         newContent.map(a => a._id === id ? {...a, content: [...a.content, doc]} : a)
       );
     }
-
-
   }
   
   const onAddDocumentIndex = (id: string, document: Id<"documents">, forward: Id<"documents">) => {
@@ -133,15 +141,29 @@ export const useKanbanBoard = ({
     )
   }
 
+  const onDocumentSetColor = (document: Id<"documents">, color: {light: string, dark: string} | undefined) => {
+    if (content === undefined) return;
+
+    const doc = getDocument(content, document);
+    if (doc === undefined) return;
+
+    setContent(prev =>
+      prev?.map(a => a.content.includes(doc) ? {...a, content: a.content.map( b => b === doc ? { ...b, color } : b)} : a)
+    );
+  }
+
   return {
     content,
     onNewElement,
     onRemoveElement,
     onRenameElement,
     onMoveElement,
+    onElementSetColor,
+
     onAddDocument,
     onAddDocumentIndex,
     onRemoveDocument,
+    onDocumentSetColor,
   }
 }
 

@@ -6,10 +6,14 @@ export type KanbanBoardElement = {
   _id: string,
   name: string,
   content: KanbanBoardDocument[],
+
+  color?: { light: string, dark: string },
 };
 
 export type KanbanBoardDocument = {
-  _id: Id<"documents">
+  _id: Id<"documents">,
+
+  color?: { light: string, dark: string },
 };
 
 

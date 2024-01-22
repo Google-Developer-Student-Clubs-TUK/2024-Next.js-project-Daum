@@ -11,14 +11,16 @@ import { Button } from "./ui/button";
 import { Plus, Search, Settings, Trash } from "lucide-react";
 import { BoardDocument } from "./board-document";
 import { Input } from "./ui/input";
-import { KanbanBoardElement } from "@/types/kanbanboard";
+import { KanbanBoardDocument, KanbanBoardElement } from "@/types/kanbanboard";
+import { useTheme } from "next-themes";
 
 export const BoardElement = ({
   editor,
   element: {
     name,
     _id,
-    content
+    content,
+    color
   },
   editable,
   documents,
@@ -28,7 +30,7 @@ export const BoardElement = ({
   editable?: boolean,
   documents?: Doc<"documents">[] | undefined,
 }) => {
-
+  const { resolvedTheme } = useTheme();
   const inputRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -39,16 +41,28 @@ export const BoardElement = ({
   })
 
   const contentDocuments = content.map(c => 
-    documents?.filter(d => d._id === c._id)[0]
-  ).filter((c): c is Doc<"documents"> => !!c);
+    documents !== undefined ? { board: c, doc: documents.filter(d => d._id === c._id)[0]} : undefined
+  ).filter((c): c is { board: KanbanBoardDocument, doc:  Doc<"documents">} => !!c);
 
   const { 
     onRenameElement,
     onRemoveElement,
     onMoveElement,
+    onElementSetColor,
 
     onAddDocument,
   } = editor;
+
+  const colors = [
+    { light: "#f5f5f5", dark: "#262626"},
+    { light: "#fee2e2", dark: "#7f1d1d"},
+    { light: "#ffedd5", dark: "#7c2d12"},
+    { light: "#fef9c3", dark: "#713f12"},
+    { light: "#dcfce7", dark: "#14532d"},
+    { light: "#e0f2fe", dark: "#0c4a6e"},
+    { light: "#dbeafe", dark: "#1e3a8a"},
+    { light: "#f3e8ff", dark: "#581c87"},
+  ];
 
   const enableInput = () => {
     if (!editable) return;
@@ -58,6 +72,7 @@ export const BoardElement = ({
       inputRef.current?.focus();
     }, 0);
   }
+
 
   const disableInput = () => setIsEditing(false);
 
@@ -105,6 +120,11 @@ export const BoardElement = ({
   return (
     <div
       className="flex flex-col h-min w-64 min-w-48 ml-2 p-2 rounded-md bg-neutral-100 dark:bg-neutral-800 shrink-[0.5]"
+      style={!!color ? {
+          backgroundColor: resolvedTheme === "dark" ? color.dark : color.light
+        }
+      : {}
+      }
       onDragOver={onDragOver}
       onDrop={onDrop}
 
@@ -159,6 +179,19 @@ export const BoardElement = ({
                   Delete
                 </Button>
               </div>
+              <div className="p-1 flex justify-around">
+                {colors.map(c => (
+                  <div
+                    key={c.light}
+                    role="button"
+                    className="h-4 w-4 rounded-sm"
+                    style={{
+                      backgroundColor: resolvedTheme === "dark" ? c.dark : c.light
+                    }}
+                    onClick={() => onElementSetColor(_id, c)}
+                  />
+                ))}
+              </div>
             </PopoverContent>
           </Popover>
           <Popover>
@@ -209,9 +242,10 @@ export const BoardElement = ({
       <div className="flex flex-col min-h-64 space-y-2">
         {contentDocuments.length > 0 ? contentDocuments.map(document => (
           <BoardDocument 
-            key={document._id}
+            key={document.board._id}
+            boardDocument={document.board}
             _id={_id}
-            document={document}
+            document={document.doc}
             editable={editable}
             editor={editor}
           />
