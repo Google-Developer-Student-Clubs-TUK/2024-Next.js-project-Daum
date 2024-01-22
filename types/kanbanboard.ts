@@ -1,10 +1,16 @@
 import { Id } from "@/convex/_generated/dataModel"
 
-export type KanbanBoard = {
+export type KanbanBoard = KanbanBoardElement[];
+
+export type KanbanBoardElement = {
   _id: string,
   name: string,
-  content: Id<"documents">[],
-}[];
+  content: KanbanBoardDocument[],
+};
+
+export type KanbanBoardDocument = {
+  _id: Id<"documents">
+};
 
 
 export const newKanbanBoard = (

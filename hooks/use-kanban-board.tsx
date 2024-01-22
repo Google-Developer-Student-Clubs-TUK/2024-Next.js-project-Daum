@@ -83,31 +83,53 @@ export const useKanbanBoard = ({
   }
 
   const onAddDocument = (id: string, document: Id<"documents">) => {
-    setContent(prev =>
-      prev?.map(a => a.content.includes(document) ? {...a, content: a.content.filter( b => b !== document )} : a)
-    )
-    setContent(prev =>
-      prev?.map(a => a._id === id ? {...a, content: [...a.content, document]} : a)
-    )
+    if (content === undefined) return;
+
+    const doc = getDocument(content, document);
+    if (doc === undefined) {
+      setContent(
+        content.map(a => a._id === id ? {...a, content: [...a.content, { _id: document}]} : a)
+      );
+    }
+    else {
+      const newContent = content.map(a => a.content.includes(doc) ? { ...a, content: a.content.filter( b => b !== doc )} : a);
+      setContent(
+        newContent.map(a => a._id === id ? {...a, content: [...a.content, doc]} : a)
+      );
+    }
+
+
   }
   
   const onAddDocumentIndex = (id: string, document: Id<"documents">, forward: Id<"documents">) => {
-    const newContent = content?.map(a => a.content.includes(document) ? {...a, content: a.content.filter( b => b !== document )} : a);
-    if (!!newContent) {
-      const index = newContent.filter(a => a._id === id)[0].content.indexOf(forward);
+    if (content === undefined) return;
 
-      setContent( 
-        newContent?.map(a => a._id === id ? {...a, content: [
-          ...a.content.slice(0, index),
-          document,
-          ...a.content.slice(index)
-        ]} : a));
-    }
+    const doc = getDocument(content, document);
+    if (doc === undefined) return;
+
+    const newContent = content.map(a => a.content.includes(doc) ? {...a, content: a.content.filter( b => b !== doc )} : a);
+
+    const fwd = getDocument(content, forward);
+    if (fwd === undefined) return;
+
+    const index = newContent.filter(a => a._id === id)[0].content.indexOf(fwd);
+
+    setContent( 
+      newContent?.map(a => a._id === id ? {...a, content: [
+        ...a.content.slice(0, index),
+        doc,
+        ...a.content.slice(index)
+      ]} : a));
   }
 
   const onRemoveDocument = (document: Id<"documents">) => {
+    if (content === undefined) return;
+
+    const doc = getDocument(content, document);
+    if (doc === undefined) return;
+
     setContent(prev =>
-      prev?.map(a => a.content.includes(document) ? {...a, content: a.content.filter( b => b !== document )} : a)
+      prev?.map(a => a.content.includes(doc) ? {...a, content: a.content.filter( b => b !== doc )} : a)
     )
   }
 
@@ -121,4 +143,16 @@ export const useKanbanBoard = ({
     onAddDocumentIndex,
     onRemoveDocument,
   }
+}
+
+const getDocument = (content: KanbanBoard, document: Id<"documents">) => {
+  console.log(content, document);
+  for (let e of content) {
+    for (let d of e.content) {
+      if (d._id === document) {
+        return d;
+      }
+    }
+  }
+  return undefined;
 }

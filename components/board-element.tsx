@@ -11,6 +11,7 @@ import { Button } from "./ui/button";
 import { Plus, Search, Settings, Trash } from "lucide-react";
 import { BoardDocument } from "./board-document";
 import { Input } from "./ui/input";
+import { KanbanBoardElement } from "@/types/kanbanboard";
 
 export const BoardElement = ({
   editor,
@@ -23,11 +24,7 @@ export const BoardElement = ({
   documents,
 }: {
   editor: KanbanBoardProps,
-  element: {
-    _id: string,
-    name: string,
-    content: Id<"documents">[],
-  },
+  element: KanbanBoardElement,
   editable?: boolean,
   documents?: Doc<"documents">[] | undefined,
 }) => {
@@ -42,7 +39,7 @@ export const BoardElement = ({
   })
 
   const contentDocuments = content.map(c => 
-    documents?.filter(d => d._id === c)[0]
+    documents?.filter(d => d._id === c._id)[0]
   ).filter((c): c is Doc<"documents"> => !!c);
 
   const { 
