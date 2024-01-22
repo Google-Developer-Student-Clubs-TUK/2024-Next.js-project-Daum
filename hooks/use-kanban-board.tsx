@@ -12,11 +12,9 @@ export interface KanbanBoardProps {
 }
 
 export const useKanbanBoard = ({
-  editable,
   initialContent,
   onBoardChanged
 }: {
-  editable?: boolean,
   initialContent?: KanbanBoard | undefined
   onBoardChanged: (value: KanbanBoard) => void
 }): KanbanBoardProps => {

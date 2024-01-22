@@ -19,7 +19,6 @@ const BoardView = ({
   const documents = useQuery(api.documents.getSearch, {});
 
   const editor = useKanbanBoard({
-    editable,
     initialContent: initialContent ? JSON.parse(initialContent) : undefined,
     onBoardChanged: (board) => {
       onChange(JSON.stringify(board, null, 2));
