@@ -63,6 +63,7 @@ export const useKanbanBoard = ({
 
   const onMoveElement = (id: string, forward?: string) => {
     if (content === undefined) return;
+    if (id === forward) return;
 
     const element = content.filter(a => a._id === id)[0];
     const newContent = content.filter(a => a._id !== id);
@@ -111,6 +112,7 @@ export const useKanbanBoard = ({
   
   const onAddDocumentIndex = (id: string, document: Id<"documents">, forward: Id<"documents">) => {
     if (content === undefined) return;
+    if (document === forward) return;
 
     const doc = getDocument(content, document);
     if (doc === undefined) return;
