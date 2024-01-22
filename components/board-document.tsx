@@ -7,6 +7,7 @@ import Link from "next/link"
 import { KanbanBoardProps } from "@/hooks/use-kanban-board"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 export const BoardDocument = ({
   _id,
@@ -67,7 +68,10 @@ export const BoardDocument = ({
           {document.title}
         </div>
       </div>
-      <div className="m-2">
+      <div className={cn(
+        "m-2",
+        !editable && "hidden"
+      )}>
         <Popover>
           <PopoverTrigger asChild>
             <div role="button">
