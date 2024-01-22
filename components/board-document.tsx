@@ -72,7 +72,7 @@ export const BoardDocument = ({
 
   return (
     <div
-      className="w-full h-16 bg-green-200 dark:bg-green-700 rounded-md flex justify-between" 
+      className="w-full h-16 bg-green-200 dark:bg-green-700 rounded-md flex flex-col" 
       draggable={editable}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
@@ -83,67 +83,71 @@ export const BoardDocument = ({
     : {}
     }
     >
-      <div className="m-2 flex">
-        <Link
-          href={`/documents/${document._id}`}
-          className="">
-            {document.icon ? (
-              <p className="mr-2 text-[18px]">{document.icon}</p>
-            ) : (
-              <File className="mr-2 h-4 w-4" />
-            )}
-        </Link>
-        <div className="text-foreground">
-          {document.title}
+      <div className="flex justify-between">
+        <div className="m-2 flex">
+          <Link
+            href={`/documents/${document._id}`}
+            className="">
+              {document.icon ? (
+                <p className="mr-2 text-[18px]">{document.icon}</p>
+              ) : (
+                <File className="mr-2 h-4 w-4" />
+              )}
+          </Link>
+          <div className="text-foreground">
+            {document.title}
+          </div>
+        </div>
+        <div className={cn(
+          "m-2",
+          !editable && "hidden"
+        )}>
+          <Popover>
+            <PopoverTrigger asChild>
+              <div role="button">
+                <MoreHorizontal className="w-4 h-4 text-muted-foreground"/>
+              </div>
+            </PopoverTrigger>
+            <PopoverContent
+              className="p-0 w-48"
+              side="bottom"
+            >
+              <div className="p-1">
+                <Button
+                  variant="ghost"
+                  className="w-full flex justify-start"
+                  onClick={() => onRemoveDocument(document._id)}
+                >
+                  <Trash className="h-4 w-4 mr-2" />
+                  Delete
+                </Button>
+              </div>
+              <div className="p-1 flex justify-around">
+                <SquareSlash
+                  className="h-4 w-4"
+                  role="button"
+                  onClick={() => onDocumentSetColor(document._id, undefined)}
+                />
+                {colors.map(c => (
+                  <div
+                    key={c.light}
+                    role="button"
+                    className={cn(
+                      "h-4 w-4 rounded-sm",
+                      color?.light === c.light && "border-2 border-neutral-500 dark:border-neutral-400"
+                    )}
+                    style={{
+                      backgroundColor: resolvedTheme === "dark" ? c.dark : c.light
+                    }}
+                    onClick={() => onDocumentSetColor(document._id, c)}
+                  />
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
-      <div className={cn(
-        "m-2",
-        !editable && "hidden"
-      )}>
-        <Popover>
-          <PopoverTrigger asChild>
-            <div role="button">
-              <MoreHorizontal className="w-4 h-4 text-muted-foreground"/>
-            </div>
-          </PopoverTrigger>
-          <PopoverContent
-            className="p-0 w-48"
-            side="bottom"
-          >
-            <div className="p-1">
-              <Button
-                variant="ghost"
-                className="w-full flex justify-start"
-                onClick={() => onRemoveDocument(document._id)}
-              >
-                <Trash className="h-4 w-4 mr-2" />
-                Delete
-              </Button>
-            </div>
-            <div className="p-1 flex justify-around">
-              <SquareSlash
-                className="h-4 w-4"
-                role="button"
-                onClick={() => onDocumentSetColor(document._id, undefined)}
-              />
-              {colors.map(c => (
-                <div
-                  key={c.light}
-                  role="button"
-                  className={cn(
-                    "h-4 w-4 rounded-sm",
-                    color?.light === c.light && "border-2 border-neutral-500 dark:border-neutral-400"
-                  )}
-                  style={{
-                    backgroundColor: resolvedTheme === "dark" ? c.dark : c.light
-                  }}
-                  onClick={() => onDocumentSetColor(document._id, c)}
-                />
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
+      <div className="mx-1 text-xs text-muted-foreground overflow-hidden flex items-center">
       </div>
     </div>
   )
