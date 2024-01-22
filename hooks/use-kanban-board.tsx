@@ -9,6 +9,7 @@ export interface KanbanBoardProps {
   onRenameElement: (id: string, name: string) => void;
   onAddDocument: (id: string, document: Id<"documents">) => void;
   onAddDocumentIndex: (id: string, document: Id<"documents">, forward: Id<"documents">) => void,
+  onRemoveDocument: (document: Id<"documents">) => void;
 }
 
 export const useKanbanBoard = ({
@@ -80,6 +81,12 @@ export const useKanbanBoard = ({
     }
   }
 
+  const onRemoveDocument = (document: Id<"documents">) => {
+    setContent(prev =>
+      prev?.map(a => a.content.includes(document) ? {...a, content: a.content.filter( b => b !== document )} : a)
+    )
+  }
+
   return {
     content,
     onNewElement,
@@ -87,5 +94,6 @@ export const useKanbanBoard = ({
     onRenameElement,
     onAddDocument,
     onAddDocumentIndex,
+    onRemoveDocument,
   }
 }
