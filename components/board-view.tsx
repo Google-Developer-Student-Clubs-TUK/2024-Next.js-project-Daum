@@ -4,6 +4,8 @@ import { useKanbanBoard } from "@/hooks/use-kanban-board";
 import { PlusCircle } from "lucide-react";
 
 import { BoardElement } from "./board-element";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const BoardView = ({
   onChange,
@@ -14,6 +16,8 @@ const BoardView = ({
   initialContent?: string,
   editable?: boolean
 }) => {
+  const documents = useQuery(api.documents.getSearch, {});
+
   const editor = useKanbanBoard({
     editable,
     initialContent: initialContent ? JSON.parse(initialContent) : undefined,
@@ -30,6 +34,7 @@ const BoardView = ({
           element={v}
           editor={editor}
           editable={editable}
+          documents={documents}
         />
       ))}
       <div

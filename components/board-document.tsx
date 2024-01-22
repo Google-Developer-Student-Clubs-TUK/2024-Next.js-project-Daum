@@ -1,6 +1,6 @@
-import { api } from "@/convex/_generated/api"
-import { Id } from "@/convex/_generated/dataModel"
-import { useQuery } from "convex/react"
+"use client";
+
+import { Doc, Id } from "@/convex/_generated/dataModel"
 import { Skeleton } from "./ui/skeleton"
 import { File } from "lucide-react"
 import Link from "next/link"
@@ -8,21 +8,17 @@ import { KanbanBoardProps } from "@/hooks/use-kanban-board"
 
 export const BoardDocument = ({
   _id,
-  id,
+  document,
   editable,
   editor: {
     onAddDocumentIndex
   }
 }: {
   _id: string,
-  id: Id<"documents">,
+  document: Doc<"documents">,
   editable?: boolean,
   editor: KanbanBoardProps
 }) => {
-  const document = useQuery(api.documents.getById, {
-    documentId: id
-  });
-
   if (document === undefined) {
     return <Skeleton className="h-16 w-full"/>
   }
@@ -40,7 +36,7 @@ export const BoardDocument = ({
   const onDrop = (e: React.DragEvent) => {
     if (e.dataTransfer.types[0] === "documentid") {
       const documentId = e.dataTransfer.getData("documentid") as Id<"documents">;
-      onAddDocumentIndex(_id, documentId, id);
+      onAddDocumentIndex(_id, documentId, document._id);
       
       e.stopPropagation();
     }
@@ -50,7 +46,7 @@ export const BoardDocument = ({
     <div
       className="w-full h-16 bg-green-200 dark:bg-green-700 rounded-md flex" 
       draggable={editable}
-      onDragStart={(e) => e.dataTransfer.setData("documentid", id)}
+      onDragStart={(e) => e.dataTransfer.setData("documentid", document._id)}
       onDragOver={onDragOver}
       onDrop={onDrop}
     >

@@ -1,7 +1,7 @@
 "use client";
 
 import { ElementRef, useRef, useState } from "react";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { KanbanBoardProps } from "@/hooks/use-kanban-board";
 import TextareaAutoSize from "react-textarea-autosize";
 
@@ -11,8 +11,6 @@ import { Button } from "./ui/button";
 import { Plus, Search, Settings, Trash } from "lucide-react";
 import { BoardDocument } from "./board-document";
 import { Input } from "./ui/input";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 
 export const BoardElement = ({
   editor,
@@ -22,6 +20,7 @@ export const BoardElement = ({
     content
   },
   editable,
+  documents,
 }: {
   editor: KanbanBoardProps,
   element: {
@@ -30,8 +29,8 @@ export const BoardElement = ({
     content: Id<"documents">[],
   },
   editable?: boolean,
+  documents?: Doc<"documents">[] | undefined,
 }) => {
-  const documents = useQuery(api.documents.getSearch, {});
 
   const inputRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -41,6 +40,11 @@ export const BoardElement = ({
   const filteredDocuments = documents?.filter((document) => {
     return document.title.toLowerCase().includes(search.toLowerCase());
   })
+
+  const contentDocuments = content.map(c => 
+    documents?.filter(d => d._id === c)[0]
+  ).filter((c): c is Doc<"documents"> => !!c);
+
   const { 
     onRenameElement,
     onRemoveElement,
@@ -187,11 +191,11 @@ export const BoardElement = ({
         </div>
       </div>
       <div className="flex flex-col min-h-64 space-y-2">
-        {content && content.length > 0 ? content.map(i => (
+        {contentDocuments.length > 0 ? contentDocuments.map(document => (
           <BoardDocument 
-            key={i}
+            key={document._id}
             _id={_id}
-            id={i}
+            document={document}
             editable={editable}
             editor={editor}
           />
