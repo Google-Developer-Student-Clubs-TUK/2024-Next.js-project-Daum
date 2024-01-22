@@ -31,6 +31,11 @@ export const BoardDocument = ({
     return null;
   }
 
+  const onDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData("documentid", document._id);
+    e.stopPropagation();
+  }
+
   const onDragOver = (e: React.DragEvent) => {
     if (e.dataTransfer.types[0] === "documentid") {
       e.preventDefault();
@@ -50,7 +55,7 @@ export const BoardDocument = ({
     <div
       className="w-full h-16 bg-green-200 dark:bg-green-700 rounded-md flex justify-between" 
       draggable={editable}
-      onDragStart={(e) => e.dataTransfer.setData("documentid", document._id)}
+      onDragStart={onDragStart}
       onDragOver={onDragOver}
       onDrop={onDrop}
     >

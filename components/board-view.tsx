@@ -25,6 +25,21 @@ const BoardView = ({
     }
   });
 
+  const onDragOver = (e: React.DragEvent) => {
+    if (e.dataTransfer.types[0] === "elementid") {
+      e.preventDefault();
+    }
+  }
+
+  const onDrop = (e: React.DragEvent) => {
+    if (e.dataTransfer.types[0] === "elementid") {
+      const elementId = e.dataTransfer.getData("elementid");
+      editor.onMoveElement(elementId);
+
+      e.stopPropagation();
+    }
+  }
+
   return (
     <div className="flex overflow-x-auto m-4 min-h-80">
       {editor.content && editor.content.map(v => (
@@ -40,6 +55,9 @@ const BoardView = ({
         className="flex flex-col h-min w-64 ml-2 p-2 rounded-md border-2 border-dashed justify-center items-center shrink-[3]"
         role="button"
         onClick={editor.onNewElement}
+
+        onDragOver={onDragOver}
+        onDrop={onDrop}
       >
         <div className="h-80 flex justify-center items-center">
           <PlusCircle className="w-8 h-8 text-neutral-200"/>

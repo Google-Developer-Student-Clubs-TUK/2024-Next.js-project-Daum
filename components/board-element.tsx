@@ -48,6 +48,7 @@ export const BoardElement = ({
   const { 
     onRenameElement,
     onRemoveElement,
+    onMoveElement,
 
     onAddDocument,
   } = editor;
@@ -74,8 +75,16 @@ export const BoardElement = ({
     onRenameElement(id, value);
   }
 
+  const onDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    e.dataTransfer.setData("elementid", _id);
+    e.stopPropagation();
+  }
+
   const onDragOver = (e: React.DragEvent) => {
     if (e.dataTransfer.types[0] === "documentid") {
+      e.preventDefault();
+    }
+    if (e.dataTransfer.types[0] === "elementid") {
       e.preventDefault();
     }
   }
@@ -87,6 +96,13 @@ export const BoardElement = ({
 
       e.stopPropagation();
     }
+
+    if (e.dataTransfer.types[0] === "elementid") {
+      const elementId = e.dataTransfer.getData("elementid");
+      onMoveElement(elementId, _id);
+
+      e.stopPropagation();
+    }
   }
 
   return (
@@ -94,6 +110,9 @@ export const BoardElement = ({
       className="flex flex-col h-min w-64 min-w-48 ml-2 p-2 rounded-md bg-neutral-100 dark:bg-neutral-800 shrink-[0.5]"
       onDragOver={onDragOver}
       onDrop={onDrop}
+
+      draggable={editable}
+      onDragStart={onDragStart}
     >
       <div className="mb-8 flex justify-between items-center">
         { isEditing && editable ? (
