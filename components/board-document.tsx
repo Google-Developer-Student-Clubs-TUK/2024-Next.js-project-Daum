@@ -131,7 +131,10 @@ export const BoardDocument = ({
                 <div
                   key={c.light}
                   role="button"
-                  className="h-4 w-4 rounded-sm"
+                  className={cn(
+                    "h-4 w-4 rounded-sm",
+                    color?.light === c.light && "border-2 border-neutral-500 dark:border-neutral-400"
+                  )}
                   style={{
                     backgroundColor: resolvedTheme === "dark" ? c.dark : c.light
                   }}
