@@ -7,11 +7,11 @@ export interface KanbanBoardProps {
   onNewElement: () => void;
   onRemoveElement: (id: string) => void;
   onRenameElement: (id: string, name: string) => void;
-  onMoveElement: (id: string, forward?: string) => void;
+  onMoveElement: (id: string, index: number) => void;
   onElementSetColor: (id: string, color: {light: string, dark: string}) => void;
 
   onAddDocument: (id: string, document: Id<"documents">) => void;
-  onAddDocumentIndex: (id: string, document: Id<"documents">, forward: Id<"documents">) => void,
+  onMoveDocument: (id: string, document: Id<"documents">, index: number) => void,
   onRemoveDocument: (document: Id<"documents">) => void;
   onDocumentSetColor: (Document: Id<"documents">, color: {light: string, dark: string} | undefined) => void;
 }
@@ -61,28 +61,21 @@ export const useKanbanBoard = ({
     );
   };
 
-  const onMoveElement = (id: string, forward?: string) => {
+  const onMoveElement = (id: string, index: number) => {
     if (!content) return;
-    if (id === forward) return;
 
     const element = content.filter(a => a._id === id)[0];
-    const newContent = content.filter(a => a._id !== id);
-    if (forward !== undefined) {
-      const fwdElement = content.filter(a => a._id === forward)[0];
-      const index = newContent.indexOf(fwdElement);
+    const elementIndex = content.indexOf(element);
 
-      setContent([
-        ...newContent.slice(0, index),
-        element,
-        ...newContent.slice(index)
-      ]);
-    }
-    else {
-      setContent([
-        ...newContent,
-        element
-      ]);
-    }
+    if (index > elementIndex) index--;
+
+    const newContent = content.filter(a => a._id !== id);
+
+    setContent([
+      ...newContent.slice(0, index),
+      element,
+      ...newContent.slice(index)
+    ]);
   };
 
   const onElementSetColor = (id: string, color: {light: string, dark: string}) => {
@@ -110,19 +103,16 @@ export const useKanbanBoard = ({
     }
   };
 
-  const onAddDocumentIndex = (id: string, document: Id<"documents">, forward: Id<"documents">) => {
+  const onMoveDocument = (id: string, document: Id<"documents">, index: number) => {
     if (!content) return;
-    if (document === forward) return;
 
     const doc = getDocument(content, document);
     if (!doc) return;
 
+    const docIndex = content.filter(a => a.content.includes(doc))[0].content.indexOf(doc);
+    if (index > docIndex) index--;
+
     const newContent = content.map(a => a.content.includes(doc) ? {...a, content: a.content.filter( b => b !== doc )} : a);
-
-    const fwd = getDocument(content, forward);
-    if (!fwd) return;
-
-    const index = newContent.filter(a => a._id === id)[0].content.indexOf(fwd);
 
     setContent(
       newContent?.map(a => a._id === id ? {...a, content: [
@@ -163,14 +153,13 @@ export const useKanbanBoard = ({
     onElementSetColor,
 
     onAddDocument,
-    onAddDocumentIndex,
+    onMoveDocument,
     onRemoveDocument,
     onDocumentSetColor,
   };
 }
 
 const getDocument = (content: KanbanBoard, document: Id<"documents">) => {
-  console.log(content, document);
   for (let e of content) {
     for (let d of e.content) {
       if (d._id === document) {

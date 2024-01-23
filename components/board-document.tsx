@@ -10,6 +10,7 @@ import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { KanbanBoardDocument } from "@/types/kanbanboard";
+import { ElementRef, useRef } from "react";
 
 export const BoardDocument = ({
   _id,
@@ -19,18 +20,20 @@ export const BoardDocument = ({
   document,
   editable,
   editor: {
-    onAddDocumentIndex,
     onRemoveDocument,
     onDocumentSetColor,
-  }
+  },
+  onDragChange,
 }: {
   _id: string,
   boardDocument: KanbanBoardDocument
   document: Doc<"documents">,
   editable?: boolean,
   editor: KanbanBoardProps
+  onDragChange?: (status: ("before" | "after" | "none")) => void,
 }) => {
   const { resolvedTheme } = useTheme();
+  const rootRef = useRef<ElementRef<"div">>(null);
 
   if (document === undefined) {
     return <Skeleton className="h-16 w-full"/>
@@ -56,27 +59,33 @@ export const BoardDocument = ({
   }
 
   const onDragOver = (e: React.DragEvent) => {
-    if (e.dataTransfer.types[0] === "documentid") {
+    if (e.dataTransfer.types[0] === "documentid" && rootRef.current) {
+      const offsets = rootRef.current.getBoundingClientRect();
+      const relativePosition = e.clientY - offsets.top;
+
+      if (relativePosition < offsets.height / 2) {
+        onDragChange?.("before");
+      } else {
+        onDragChange?.("after");
+      }
+      
       e.preventDefault();
-    }
-  }
-
-  const onDrop = (e: React.DragEvent) => {
-    if (e.dataTransfer.types[0] === "documentid") {
-      const documentId = e.dataTransfer.getData("documentid") as Id<"documents">;
-      onAddDocumentIndex(_id, documentId, document._id);
-
       e.stopPropagation();
     }
   }
 
+  const onDragLeave = () => {
+    onDragChange?.("none");
+  }
+
   return (
     <div
+      ref={rootRef}
       className="w-full h-16 bg-green-200 dark:bg-green-700 rounded-md flex flex-col"
       draggable={editable}
       onDragStart={onDragStart}
+      onDragLeave={onDragLeave}
       onDragOver={onDragOver}
-      onDrop={onDrop}
       style={!!color ? {
         backgroundColor: resolvedTheme === "dark" ? color.dark : color.light
       }

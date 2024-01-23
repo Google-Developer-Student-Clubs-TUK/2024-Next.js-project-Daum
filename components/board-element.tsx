@@ -1,6 +1,6 @@
 "use client";
 
-import { ElementRef, useRef, useState } from "react";
+import React, { ElementRef, useRef, useState } from "react";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { KanbanBoardProps } from "@/hooks/use-kanban-board";
 import TextareaAutoSize from "react-textarea-autosize";
@@ -24,17 +24,21 @@ export const BoardElement = ({
   },
   editable,
   documents,
+  onDragChange,
 }: {
   editor: KanbanBoardProps,
   element: KanbanBoardElement,
   editable?: boolean,
   documents?: Doc<"documents">[] | undefined,
+  onDragChange?: (status: ("before" | "after" | "none")) => void,
 }) => {
   const { resolvedTheme } = useTheme();
+  const rootRef = useRef<ElementRef<"div">>(null);
   const inputRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
 
   const [search, setSearch] = useState("");
+  const [dragSelected, setDragSelected] = useState<number | undefined>(undefined);
 
   const filteredDocuments = documents?.filter((document) => {
     return document.title.toLowerCase().includes(search.toLowerCase());
@@ -51,6 +55,7 @@ export const BoardElement = ({
     onElementSetColor,
 
     onAddDocument,
+    onMoveDocument: onAddDocumentIndex,
   } = editor;
 
   const colors = [
@@ -92,40 +97,79 @@ export const BoardElement = ({
     e.stopPropagation();
   }
 
+  const onDocumentDragOver = (
+    status: ("before" | "after" | "none"), 
+    index: number
+  ) => {
+    switch (status) {
+      case "none":
+        setDragSelected(undefined);
+        break;
+      case "before":
+        setDragSelected(index);
+        break;
+      case "after":
+        setDragSelected(index + 1);
+        break;
+    }
+  }
+
+  const onDocumentIndexDragOver = (
+    e: React.DragEvent<HTMLDivElement>,
+    index: number
+  ) => {
+    if (e.dataTransfer.types[0] === "documentid") {
+      e.preventDefault();
+      e.stopPropagation();
+
+      setDragSelected(index);
+    }
+  }
+
   const onDragOver = (e: React.DragEvent) => {
     if (e.dataTransfer.types[0] === "documentid") {
       e.preventDefault();
+      setDragSelected(undefined);
     }
-    if (e.dataTransfer.types[0] === "elementid") {
+    if (e.dataTransfer.types[0] === "elementid" && rootRef.current) {
+      const offsets = rootRef.current.getBoundingClientRect();
+      const relativePosition = e.clientX - offsets.left;
+      
+      if (relativePosition < offsets.width / 2) {
+        onDragChange?.("before");
+      } else {
+        onDragChange?.("after");
+      }
+      
       e.preventDefault();
     }
+  }
+
+  const onDragLeave = () => {
+    onDragChange?.("none");
   }
 
   const onDrop = (e: React.DragEvent) => {
     if (e.dataTransfer.types[0] === "documentid") {
       const documentId = e.dataTransfer.getData("documentid") as Id<"documents">;
-      onAddDocument(_id, documentId);
+      onAddDocumentIndex(_id, documentId, dragSelected ?? contentDocuments.length);
 
-      e.stopPropagation();
-    }
-
-    if (e.dataTransfer.types[0] === "elementid") {
-      const elementId = e.dataTransfer.getData("elementid");
-      onMoveElement(elementId, _id);
-
+      setDragSelected(undefined);
       e.stopPropagation();
     }
   }
 
   return (
     <div
-      className="flex flex-col h-min w-64 min-w-48 ml-2 p-2 rounded-md bg-neutral-100 dark:bg-neutral-800 shrink-[0.5]"
+      ref={rootRef}
+      className="flex flex-col h-min w-64 min-w-48 p-2 rounded-md bg-neutral-100 dark:bg-neutral-800 shrink-[0.5]"
       style={!!color ? {
           backgroundColor: resolvedTheme === "dark" ? color.dark : color.light
         }
       : {}
       }
       onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
       onDrop={onDrop}
 
       draggable={editable}
@@ -242,21 +286,40 @@ export const BoardElement = ({
           </Popover>
         </div>
       </div>
-      <div className="flex flex-col min-h-64 space-y-2">
-        {contentDocuments.length > 0 ? contentDocuments.map(document => (
-          <BoardDocument
+      <div className="flex flex-col min-h-64">
+        {contentDocuments.length > 0 ? contentDocuments.map((document, i) => (
+          <React.Fragment
             key={document.board._id}
-            boardDocument={document.board}
-            _id={_id}
-            document={document.doc}
-            editable={editable}
-            editor={editor}
-          />
+          >
+            <div 
+              className={cn(
+                "h-2 w-full rounded-md",
+                dragSelected === i && "bg-blue-400/75"
+              )}
+              onDragOver={(e) => onDocumentIndexDragOver(e, i)}
+            />
+            <BoardDocument
+              boardDocument={document.board}
+              _id={_id}
+              document={document.doc}
+              editable={editable}
+              editor={editor}
+              onDragChange={(status) => onDocumentDragOver(status, i)}
+            />
+          </React.Fragment>
         )) : (
           <div className="flex flex-col items-center justify-center w-full text-muted-foreground">
             No documents.
           </div>
         )}
+        <div 
+          className={cn(
+            "h-2 w-full rounded-md",
+            dragSelected === contentDocuments.length && "bg-blue-400/75",
+            contentDocuments.length === 0 && "hidden",
+          )}
+          onDragOver={(e) => onDocumentIndexDragOver(e, contentDocuments.length)}
+        />
       </div>
     </div>
   )
