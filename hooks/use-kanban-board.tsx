@@ -26,19 +26,19 @@ export const useKanbanBoard = ({
   const [content, setContent] = useState(initialContent);
 
   useEffect(() => {
-    if (content === undefined) {
+    if (!content) {
       setContent(newKanbanBoard());
     }
   }, [content]);
 
   useEffect(() => {
-    if (content !== undefined) {
+    if (!!content) {
       onBoardChanged(content);
     }
   }, [content, onBoardChanged]);
 
   const onNewElement = () => {
-    if (content === undefined) return;
+    if (!content) return;
     setContent([
       ...content,
       {
@@ -47,22 +47,22 @@ export const useKanbanBoard = ({
         content: []
       }
     ]);
-  }
+  };
 
   const onRemoveElement = (id: string) => {
     setContent(
       content?.filter(a => a._id !== id)
     );
-  }
+  };
 
   const onRenameElement = (id: string, name: string) => {
     setContent(
       content?.map(a => a._id === id ? {...a, name} : a)
-    )
-  }
+    );
+  };
 
   const onMoveElement = (id: string, forward?: string) => {
-    if (content === undefined) return;
+    if (!content) return;
     if (id === forward) return;
 
     const element = content.filter(a => a._id === id)[0];
@@ -83,21 +83,21 @@ export const useKanbanBoard = ({
         element
       ]);
     }
-  }
+  };
 
   const onElementSetColor = (id: string, color: {light: string, dark: string}) => {
-    if (content === undefined) return;
+    if (!content) return;
 
     setContent(
       content.map(a => a._id === id ? {...a, color} : a)
     );
-  }
+  };
 
   const onAddDocument = (id: string, document: Id<"documents">) => {
-    if (content === undefined) return;
+    if (!content) return;
 
     const doc = getDocument(content, document);
-    if (doc === undefined) {
+    if (!doc) {
       setContent(
         content.map(a => a._id === id ? {...a, content: [...a.content, { _id: document}]} : a)
       );
@@ -108,51 +108,51 @@ export const useKanbanBoard = ({
         newContent.map(a => a._id === id ? {...a, content: [...a.content, doc]} : a)
       );
     }
-  }
-  
+  };
+
   const onAddDocumentIndex = (id: string, document: Id<"documents">, forward: Id<"documents">) => {
-    if (content === undefined) return;
+    if (!content) return;
     if (document === forward) return;
 
     const doc = getDocument(content, document);
-    if (doc === undefined) return;
+    if (!doc) return;
 
     const newContent = content.map(a => a.content.includes(doc) ? {...a, content: a.content.filter( b => b !== doc )} : a);
 
     const fwd = getDocument(content, forward);
-    if (fwd === undefined) return;
+    if (!fwd) return;
 
     const index = newContent.filter(a => a._id === id)[0].content.indexOf(fwd);
 
-    setContent( 
+    setContent(
       newContent?.map(a => a._id === id ? {...a, content: [
         ...a.content.slice(0, index),
         doc,
         ...a.content.slice(index)
       ]} : a));
-  }
+  };
 
   const onRemoveDocument = (document: Id<"documents">) => {
-    if (content === undefined) return;
+    if (!content) return;
 
     const doc = getDocument(content, document);
-    if (doc === undefined) return;
+    if (!doc) return;
 
     setContent(prev =>
       prev?.map(a => a.content.includes(doc) ? {...a, content: a.content.filter( b => b !== doc )} : a)
     )
-  }
+  };
 
   const onDocumentSetColor = (document: Id<"documents">, color: {light: string, dark: string} | undefined) => {
-    if (content === undefined) return;
+    if (!content) return;
 
     const doc = getDocument(content, document);
-    if (doc === undefined) return;
+    if (!doc) return;
 
     setContent(prev =>
       prev?.map(a => a.content.includes(doc) ? {...a, content: a.content.map( b => b === doc ? { ...b, color } : b)} : a)
     );
-  }
+  };
 
   return {
     content,
@@ -166,7 +166,7 @@ export const useKanbanBoard = ({
     onAddDocumentIndex,
     onRemoveDocument,
     onDocumentSetColor,
-  }
+  };
 }
 
 const getDocument = (content: KanbanBoard, document: Id<"documents">) => {

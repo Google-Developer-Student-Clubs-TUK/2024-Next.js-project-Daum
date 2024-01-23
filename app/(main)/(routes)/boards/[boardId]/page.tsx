@@ -31,7 +31,7 @@ const BoardIdPage = ({ params }: BoardIdPageProps) => {
       </div>
     )
   }
-  
+
   if (board === null) {
     return <div>Not found</div>;
   }
@@ -41,7 +41,7 @@ const BoardIdPage = ({ params }: BoardIdPageProps) => {
       id: params.boardId,
       content: value
     });
-  }
+  };
 
   return (
     <div>

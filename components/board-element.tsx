@@ -40,11 +40,11 @@ export const BoardElement = ({
     return document.title.toLowerCase().includes(search.toLowerCase());
   })
 
-  const contentDocuments = content.map(c => 
+  const contentDocuments = content.map(c =>
     documents !== undefined ? { board: c, doc: documents.filter(d => d._id === c._id)[0]} : undefined
   ).filter((c): c is { board: KanbanBoardDocument, doc:  Doc<"documents">} => !!c);
 
-  const { 
+  const {
     onRenameElement,
     onRemoveElement,
     onMoveElement,
@@ -244,7 +244,7 @@ export const BoardElement = ({
       </div>
       <div className="flex flex-col min-h-64 space-y-2">
         {contentDocuments.length > 0 ? contentDocuments.map(document => (
-          <BoardDocument 
+          <BoardDocument
             key={document.board._id}
             boardDocument={document.board}
             _id={_id}

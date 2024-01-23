@@ -65,14 +65,14 @@ export const BoardDocument = ({
     if (e.dataTransfer.types[0] === "documentid") {
       const documentId = e.dataTransfer.getData("documentid") as Id<"documents">;
       onAddDocumentIndex(_id, documentId, document._id);
-      
+
       e.stopPropagation();
     }
   }
 
   return (
     <div
-      className="w-full h-16 bg-green-200 dark:bg-green-700 rounded-md flex flex-col" 
+      className="w-full h-16 bg-green-200 dark:bg-green-700 rounded-md flex flex-col"
       draggable={editable}
       onDragStart={onDragStart}
       onDragOver={onDragOver}

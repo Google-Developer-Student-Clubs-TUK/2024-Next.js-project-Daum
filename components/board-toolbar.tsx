@@ -23,11 +23,11 @@ export const BoardToolbar = ({
   const inputRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialData.title);
-  
+
   const update = useMutation(api.boards.update);
   const removeIcon = useMutation(api.boards.removeIcon);
 
-  
+
   const enableInput = () => {
     if (preview) return;
 

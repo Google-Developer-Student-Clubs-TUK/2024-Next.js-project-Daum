@@ -19,7 +19,7 @@ export type KanbanBoardDocument = {
 
 export const newKanbanBoard = (
   ...names: string[]
-): 
+):
 KanbanBoard => {
   return names.map(v => {
     return {

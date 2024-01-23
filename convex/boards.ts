@@ -1,7 +1,6 @@
 import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
-import { Doc, Id } from "./_generated/dataModel";
 
 export const archive = mutation({
   args: { id: v.id("boards") },
@@ -19,7 +18,7 @@ export const archive = mutation({
     if (!existingBoard) {
       throw new Error("Not found");
     }
-    
+
     if (existingBoard.userId !== userId) {
       throw new Error("Unauthorized");
     }
@@ -29,8 +28,9 @@ export const archive = mutation({
     });
 
     return board;
-  }
-})
+  },
+});
+
 export const create = mutation({
   args: {
     title: v.string(),
@@ -117,11 +117,11 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    
+
     if (!identity) {
       throw new Error("Not authenticated");
     }
-    
+
     const userId = identity.subject;
 
     const { id, ...rest } = args;
@@ -150,11 +150,11 @@ export const removeIcon = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    
+
     if (!identity) {
       throw new Error("Not authenticated");
     }
-    
+
     const userId = identity.subject;
 
     const existingBoard = await ctx.db.get(args.id);
@@ -212,7 +212,7 @@ export const restore = mutation({
     if (!existingBoard) {
       throw new Error("Not found");
     }
-    
+
     if (existingBoard.userId !== userId) {
       throw new Error("Unauthorized");
     }
@@ -241,13 +241,13 @@ export const remove = mutation({
     if (!existingBoard) {
       throw new Error("Not found");
     }
-    
+
     if (existingBoard.userId !== userId) {
       throw new Error("Unauthorized");
     }
 
     const board = await ctx.db.delete(args.id);
-    
+
     return board;
-  }
-})
+  },
+});
