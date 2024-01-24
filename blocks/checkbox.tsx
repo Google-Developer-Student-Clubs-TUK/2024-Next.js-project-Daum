@@ -17,7 +17,7 @@ export const CheckBoxBlockSpec = createReactBlockSpec(
     render: ({ block, editor, contentRef }) => {
       return (
         <div className={"checkbox"}>
-          <div className="flex ml-2">
+          <div className="flex">
             <input
               type="checkbox"
               checked={block.props.checked}
@@ -27,7 +27,7 @@ export const CheckBoxBlockSpec = createReactBlockSpec(
                   checked: e.target.checked
                 }
             }))} />
-            <div style={{marginLeft: "4px"}}>
+            <div style={{marginLeft: "12px"}}>
               <div className={"inline-content"} ref={contentRef} />
             </div>
           </div>
