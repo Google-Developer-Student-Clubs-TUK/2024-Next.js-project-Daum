@@ -21,7 +21,7 @@ export const CheckBoxBlockSpec = createReactBlockSpec(
             <input
               type="checkbox"
               checked={block.props.checked}
-              onChange={e => (editor.updateBlock(block, {
+              onChange={e => (editor.isEditable && editor.updateBlock(block, {
                 type: "checkbox",
                 props: {
                   checked: e.target.checked
