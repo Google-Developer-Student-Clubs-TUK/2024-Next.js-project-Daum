@@ -5,9 +5,9 @@ import { Smile } from "lucide-react";
 import { useMutation } from "convex/react";
 import TextareaAutoSize from "react-textarea-autosize";
 
-import { IconPicker } from "./icon-picker";
+import { IconPicker } from "../icon-picker";
 import { Doc } from "@/convex/_generated/dataModel";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { api } from "@/convex/_generated/api";
 
 

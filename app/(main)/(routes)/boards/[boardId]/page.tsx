@@ -1,7 +1,7 @@
 "use client";
 
-import { BoardToolbar } from "@/components/board-toolbar";
-import BoardView from "@/components/board-view";
+import { BoardToolbar } from "@/components/KanbanBoard/board-toolbar";
+import BoardView from "@/components/KanbanBoard/board-view";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";

@@ -1,12 +1,12 @@
 "use client";
 
 import { Doc, Id } from "@/convex/_generated/dataModel"
-import { Skeleton } from "./ui/skeleton"
+import { Skeleton } from "../ui/skeleton"
 import { File, MoreHorizontal, Trash, SquareSlash } from "lucide-react"
 import Link from "next/link"
 import { KanbanBoardProps } from "@/hooks/use-kanban-board"
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Button } from "./ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { KanbanBoardDocument } from "@/types/kanbanboard";

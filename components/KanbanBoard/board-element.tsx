@@ -6,11 +6,11 @@ import { KanbanBoardProps } from "@/hooks/use-kanban-board";
 import TextareaAutoSize from "react-textarea-autosize";
 
 import { cn } from "@/lib/utils";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Button } from "./ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Button } from "../ui/button";
 import { Plus, Search, Settings, Trash } from "lucide-react";
 import { BoardDocument } from "./board-document";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 import { KanbanBoardDocument, KanbanBoardElement } from "@/types/kanbanboard";
 import { useTheme } from "next-themes";
 
