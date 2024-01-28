@@ -2,7 +2,7 @@
 
 import { Doc, Id } from "@/convex/_generated/dataModel"
 import { Skeleton } from "../ui/skeleton"
-import { File, MoreHorizontal, Trash, SquareSlash, CheckSquare } from "lucide-react"
+import { File, MoreHorizontal, Trash, SquareSlash, CheckSquare, Flag } from "lucide-react"
 import Link from "next/link"
 import { KanbanBoardProps } from "@/hooks/use-kanban-board"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -18,12 +18,13 @@ export const BoardDocument = ({
   boardDocument: {
     _id: id,
     color,
+    priority,
   },
   document,
   editable,
   editor: {
     onRemoveDocument,
-    onDocumentSetColor,
+    onDocumentSetAttribute,
   },
   onDragChange,
 }: {
@@ -43,6 +44,12 @@ export const BoardDocument = ({
     toast('Some documents were unreadable and were removed from the board.');
     return null;
   }
+
+  const priorityColors = [
+    "#d1453b",
+    "#eb8909",
+    "#246fe0",
+  ];
 
   const colors = [
     { light: "#fecaca", dark: "#b91c1c" },
@@ -95,16 +102,16 @@ export const BoardDocument = ({
   return (
     <div
       ref={rootRef}
-      className="w-full h-16 bg-green-200 dark:bg-green-700 rounded-md flex flex-col"
+      className="w-full h-16 bg-gray-200 dark:bg-gray-700 rounded-md flex flex-col"
       draggable={editable}
       onDragStart={onDragStart}
       onDragLeave={onDragLeave}
       onDragOver={onDragOver}
-      style={!!color ? {
-        backgroundColor: resolvedTheme === "dark" ? color.dark : color.light
-      }
-    : {}
-    }
+      style={{
+        backgroundColor: resolvedTheme === "dark" ? color?.dark : color?.light,
+        outlineStyle: priority && "solid",
+        outlineColor: priority && priorityColors[priority - 1],
+      }}
     >
       <div className="flex justify-between">
         <div className="m-2 flex">
@@ -149,7 +156,7 @@ export const BoardDocument = ({
                 <SquareSlash
                   className="h-4 w-4"
                   role="button"
-                  onClick={() => onDocumentSetColor(document._id, undefined)}
+                  onClick={() => onDocumentSetAttribute(document._id, {color: undefined})}
                 />
                 {colors.map(c => (
                   <div
@@ -162,9 +169,28 @@ export const BoardDocument = ({
                     style={{
                       backgroundColor: resolvedTheme === "dark" ? c.dark : c.light
                     }}
-                    onClick={() => onDocumentSetColor(document._id, c)}
+                    onClick={() => onDocumentSetAttribute(document._id, {color: c})}
                   />
                 ))}
+              </div>
+              <div className="p-1 flex">
+                {priorityColors.map((c, i) => (
+                  <Flag 
+                    className="w-5 h-5 p-0.5"
+                    color={c}
+                    strokeWidth={(priority === i + 1) ? 4 : 2.5}
+                    role="button"
+                    key={c}
+                    onClick={() => onDocumentSetAttribute(document._id, {priority: i + 1})}
+                  />
+                ))
+                }
+                <Flag 
+                  className="w-5 h-5 p-0.5"
+                  strokeWidth={2.5}
+                  role="button"
+                  onClick={() => onDocumentSetAttribute(document._id, {priority: undefined})}
+                />
               </div>
             </PopoverContent>
           </Popover>

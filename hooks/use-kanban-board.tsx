@@ -13,7 +13,7 @@ export interface KanbanBoardProps {
   onAddDocument: (id: string, document: Id<"documents">) => void;
   onMoveDocument: (id: string, document: Id<"documents">, index: number) => void,
   onRemoveDocument: (document: Id<"documents">) => void;
-  onDocumentSetColor: (Document: Id<"documents">, color: {light: string, dark: string} | undefined) => void;
+  onDocumentSetAttribute: (Document: Id<"documents">, attributes: {}) => void;
 }
 
 export const useKanbanBoard = ({
@@ -133,14 +133,14 @@ export const useKanbanBoard = ({
     )
   };
 
-  const onDocumentSetColor = (document: Id<"documents">, color: {light: string, dark: string} | undefined) => {
+  const onDocumentSetAttribute = (document: Id<"documents">, attributes: {}) => {
     if (!content) return;
 
     const doc = getDocument(content, document);
     if (!doc) return;
 
     setContent(prev =>
-      prev?.map(a => a.content.includes(doc) ? {...a, content: a.content.map( b => b === doc ? { ...b, color } : b)} : a)
+      prev?.map(a => a.content.includes(doc) ? {...a, content: a.content.map( b => b === doc ? { ...b, ...attributes } : b)} : a)
     );
   };
 
@@ -155,7 +155,7 @@ export const useKanbanBoard = ({
     onAddDocument,
     onMoveDocument,
     onRemoveDocument,
-    onDocumentSetColor,
+    onDocumentSetAttribute,
   };
 }
 
