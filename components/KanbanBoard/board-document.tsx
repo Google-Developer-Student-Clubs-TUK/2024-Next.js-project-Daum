@@ -11,10 +11,12 @@ import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { KanbanBoardDocument } from "@/types/kanbanboard";
 import { ElementRef, useRef } from "react";
+import { toast } from "sonner";
 
 export const BoardDocument = ({
   _id,
   boardDocument: {
+    _id: id,
     color,
   },
   document,
@@ -36,10 +38,9 @@ export const BoardDocument = ({
   const rootRef = useRef<ElementRef<"div">>(null);
 
   if (document === undefined) {
-    return <Skeleton className="h-16 w-full"/>
-  }
+    onRemoveDocument(id);
 
-  if (document === null) {
+    toast('Some documents were unreadable and were removed from the board.');
     return null;
   }
 
