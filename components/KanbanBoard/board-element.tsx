@@ -299,15 +299,18 @@ export const BoardElement = ({
                 </p>
                 {filteredDocuments?.map((document) => (
                   <div
-                    role="button"
-                    className="flex text-sm rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600 text-nowrap text-ellipsis overflow-hidden"
                     key={document._id}
-                    onClick={() => onAddDocument(_id, document._id)}
                   >
-                      {document.icon && (
-                        <div className="shrink-0 mr-2 text-[18px]">{document.icon}</div>
-                      )}
-                      {document.title}
+                    <Button
+                      variant="ghost"
+                      className="flex w-full justify-start text-sm rounded-sm text-nowrap text-ellipsis overflow-hidden"
+                      onClick={() => onAddDocument(_id, document._id)}
+                    >
+                    {document.icon && (
+                      <div className="shrink-0 mr-2 text-[18px]">{document.icon}</div>
+                    )}
+                    {document.title}
+                    </Button>
                   </div>
                 ))}
               </div>
