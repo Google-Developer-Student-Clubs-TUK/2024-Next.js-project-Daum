@@ -2,7 +2,7 @@
 
 import { Doc, Id } from "@/convex/_generated/dataModel"
 import { Skeleton } from "../ui/skeleton"
-import { File, MoreHorizontal, Trash, SquareSlash } from "lucide-react"
+import { File, MoreHorizontal, Trash, SquareSlash, CheckSquare } from "lucide-react"
 import Link from "next/link"
 import { KanbanBoardProps } from "@/hooks/use-kanban-board"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -78,6 +78,19 @@ export const BoardDocument = ({
   const onDragLeave = () => {
     onDragChange?.("none");
   }
+
+  const checks = (() => {
+    if (document.content === undefined) return undefined;
+
+    const all = JSON.parse(document.content)
+      .filter((n: {type: string}) => n.type === "checkbox");
+    if (all.length === 0) return undefined;
+    
+    const completed = all
+      .filter((n: {props: { checked: boolean }}) => n.props.checked === true);
+
+    return `${completed.length}/${all.length}`;
+  })();
 
   return (
     <div
@@ -158,6 +171,12 @@ export const BoardDocument = ({
         </div>
       </div>
       <div className="mx-1 text-xs text-muted-foreground overflow-hidden flex items-center">
+        {checks && (
+          <div className="flex space-x-4">
+            <CheckSquare className="w-4 h-4 mr-2" strokeWidth={1.5} />
+            {checks}
+          </div>
+        )}
       </div>
     </div>
   )
