@@ -13,6 +13,10 @@ import { BoardDocument } from "./board-document";
 import { Input } from "../ui/input";
 import { KanbanBoardDocument, KanbanBoardElement } from "@/types/kanbanboard";
 import { useTheme } from "next-themes";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export const BoardElement = ({
   editor,
@@ -36,6 +40,8 @@ export const BoardElement = ({
   const rootRef = useRef<ElementRef<"div">>(null);
   const inputRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const create = useMutation(api.documents.create);
+  const router = useRouter();
 
   const [search, setSearch] = useState("");
   const [dragSelected, setDragSelected] = useState<number | undefined>(undefined);
@@ -159,6 +165,19 @@ export const BoardElement = ({
     }
   }
 
+  const appendNewDocument = () => {
+    const promise = create({ title: "Untitled" }).then((documentId) => {
+      onAddDocument(_id, documentId as Id<"documents">);
+      router.push(`/documents/${documentId}`);
+    });
+
+    toast.promise(promise, {
+      loading: "Creating a new note...",
+      success: "New note created!",
+      error: "Failed to create a new note.",
+    });
+  }
+
   return (
     <div
       ref={rootRef}
@@ -255,7 +274,17 @@ export const BoardElement = ({
               className="p-0 w-48"
               side="bottom"
             >
-              <div className="flex items-center gap-x-1 p-2">
+              <div className="p-1">
+                <Button
+                  variant="ghost"
+                  className="flex p-2 w-full justify-start"
+                  onClick={appendNewDocument}
+                >
+                  <Plus className="w-5 h-5 mr-2 text-muted-foreground"/>
+                  Add a page
+                </Button>
+              </div>
+              <div className="flex items-center gap-x-1 px-2">
                 <Search className="h-4 w-4" />
                 <Input
                   value={search}
