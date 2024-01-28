@@ -9,6 +9,8 @@ import { IconPicker } from "../icon-picker";
 import { Doc } from "@/convex/_generated/dataModel";
 import { Button } from "../ui/button";
 import { api } from "@/convex/_generated/api";
+import { PublishBoard } from "@/app/(main)/_components/KanbanBoard/board-publish";
+import { BoardMiscMenu } from "@/app/(main)/_components/KanbanBoard/board-misc-menu";
 
 
 interface BoardToolbarProps {
@@ -72,59 +74,71 @@ export const BoardToolbar = ({
 
   return (
     <div className="flex w-full justify-between">
-      <div className="flex items-center">
-        {!!initialData.icon && (
-          <IconPicker onChange={onIconSelect}>
-            <p className="text-6xl hover:opacity-75 transition">
+      <div className="flex flex-col w-full justify-between group">
+        <div className="flex items-center">
+          {!!initialData.icon && !preview ? (
+            <IconPicker onChange={onIconSelect}>
+              <p className="text-6xl hover:opacity-75 transition">
+                {initialData.icon}
+              </p>
+            </IconPicker>
+          ) : (
+            <p className="text-6xl">
               {initialData.icon}
             </p>
-          </IconPicker>
-        )}
-        {isEditing && !preview ? (
-          <TextareaAutoSize
-            ref={inputRef}
-            onBlur={disableInput}
-            onKeyDown={onKeyDown}
-            value={value}
-            onChange={(e) => onInput(e.target.value)}
-            className="text-5xl bg-transparent font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] resize-none p-4"
-          />
-        ) : (
-          <div
-            onClick={enableInput}
-            className="pb-[11.5px] text-5xl font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] p-4 h-20"
-          >
-            {initialData.title}
-          </div>
-        )}
-      </div>
-      <div className="p-4">
-        {!initialData.icon && !preview && (
-          //image선택하는 창 여는걸 커스텀훅으로 개발
-          <IconPicker asChild onChange={onIconSelect}>
+          )}
+          {isEditing && !preview ? (
+            <TextareaAutoSize
+              ref={inputRef}
+              onBlur={disableInput}
+              onKeyDown={onKeyDown}
+              value={value}
+              onChange={(e) => onInput(e.target.value)}
+              className="text-5xl bg-transparent font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] resize-none p-4"
+            />
+          ) : (
+            <div
+              onClick={enableInput}
+              className="pb-[11.5px] text-5xl font-bold break-words outline-none text-[#3F3F3F] dark:text-[#CFCFCF] p-4 h-20"
+            >
+              {initialData.title}
+            </div>
+          )}
+        </div>
+        <div className="p-2 opacity-0 group-hover:opacity-100 transition">
+          {!initialData.icon && !preview && (
+            //image선택하는 창 여는걸 커스텀훅으로 개발
+            <IconPicker asChild onChange={onIconSelect}>
+              <Button
+                className="text-muted-foreground text-xs"
+                variant="outline"
+                size="sm"
+              >
+                <Smile className="h-4 w-4 mr-2" />
+                Add icon
+              </Button>
+            </IconPicker>
+          )}
+          {initialData.icon && !preview && (
+            //image선택하는 창 여는걸 커스텀훅으로 개발
             <Button
               className="text-muted-foreground text-xs"
               variant="outline"
               size="sm"
+              onClick={() => onIconRemove()}
             >
               <Smile className="h-4 w-4 mr-2" />
-              Add icon
+              Remove Icon
             </Button>
-          </IconPicker>
-        )}
-        {initialData.icon && !preview && (
-          //image선택하는 창 여는걸 커스텀훅으로 개발
-          <Button
-            className="text-muted-foreground text-xs"
-            variant="outline"
-            size="sm"
-            onClick={() => onIconRemove()}
-          >
-            <Smile className="h-4 w-4 mr-2" />
-            Remove Icon
-          </Button>
-        )}
+          )}
+        </div>
       </div>
+      {!preview && (
+        <div className="flex gap-x-2 m-2">
+          <PublishBoard initialData={initialData} />
+          <BoardMiscMenu documentId={initialData._id} />
+        </div>
+      )}
     </div>
   )
 }
