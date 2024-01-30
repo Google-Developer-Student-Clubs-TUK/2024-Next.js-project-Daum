@@ -57,8 +57,7 @@ export const BoardElement = ({
   const {
     onRenameElement,
     onRemoveElement,
-    onMoveElement,
-    onElementSetColor,
+    onElementSetAttribute,
 
     onAddDocument,
     onMoveDocument: onAddDocumentIndex,
@@ -254,7 +253,7 @@ export const BoardElement = ({
                     style={{
                       backgroundColor: resolvedTheme === "dark" ? c.dark : c.light
                     }}
-                    onClick={() => onElementSetColor(_id, c)}
+                    onClick={() => onElementSetAttribute(_id, { color: c })}
                   />
                 ))}
               </div>

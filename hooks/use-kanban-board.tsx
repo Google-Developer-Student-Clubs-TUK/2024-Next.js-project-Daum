@@ -8,7 +8,7 @@ export interface KanbanBoardProps {
   onRemoveElement: (id: string) => void;
   onRenameElement: (id: string, name: string) => void;
   onMoveElement: (id: string, index: number) => void;
-  onElementSetColor: (id: string, color: {light: string, dark: string}) => void;
+  onElementSetAttribute: (id: string, attributes: {}) => void;
 
   onAddDocument: (id: string, document: Id<"documents">) => void;
   onMoveDocument: (id: string, document: Id<"documents">, index: number) => void,
@@ -78,18 +78,18 @@ export const useKanbanBoard = ({
     ]);
   };
 
-  const onElementSetColor = (id: string, color: {light: string, dark: string}) => {
+  const onElementSetAttribute = (id: string, attributes: {}) => {
     if (!content) return;
 
     setContent(
-      content.map(a => a._id === id ? {...a, color} : a)
+      content.map(a => a._id === id ? {...a, ...attributes} : a)
     );
   };
 
   const onAddDocument = (id: string, document: Id<"documents">) => {
     if (!content) return;
 
-    const doc = getDocument(content, document);
+    const doc = getDocument(document);
     if (!doc) {
       setContent(
         content.map(a => a._id === id ? {...a, content: [...a.content, { _id: document}]} : a)
@@ -106,7 +106,7 @@ export const useKanbanBoard = ({
   const onMoveDocument = (id: string, document: Id<"documents">, index: number) => {
     if (!content) return;
 
-    const doc = getDocument(content, document);
+    const doc = getDocument(document);
     if (!doc) return;
 
     const docIndex = content.filter(a => a.content.includes(doc))[0].content.indexOf(doc);
@@ -125,18 +125,22 @@ export const useKanbanBoard = ({
   const onRemoveDocument = (document: Id<"documents">) => {
     if (!content) return;
 
-    const doc = getDocument(content, document);
+    const doc = getDocument(document);
     if (!doc) return;
 
     setContent(prev =>
-      prev?.map(a => a.content.includes(doc) ? {...a, content: a.content.filter( b => b !== doc )} : a)
+      prev?.map(a => 
+        a.content.includes(doc) 
+        ? {...a, content: a.content.filter( b => b !== doc )} 
+        : a
+      )
     )
   };
 
   const onDocumentSetAttribute = (document: Id<"documents">, attributes: {}) => {
     if (!content) return;
 
-    const doc = getDocument(content, document);
+    const doc = getDocument(document);
     if (!doc) return;
 
     setContent(prev =>
@@ -144,28 +148,30 @@ export const useKanbanBoard = ({
     );
   };
 
+  const getDocument = (document: Id<"documents">) => {
+    if (content === undefined) return undefined;
+
+    for (let e of content) {
+      for (let d of e.content) {
+        if (d._id === document) {
+          return d;
+        }
+      }
+    }
+    return undefined;
+  }
+  
   return {
     content,
     onNewElement,
     onRemoveElement,
     onRenameElement,
     onMoveElement,
-    onElementSetColor,
+    onElementSetAttribute,
 
     onAddDocument,
     onMoveDocument,
     onRemoveDocument,
     onDocumentSetAttribute,
   };
-}
-
-const getDocument = (content: KanbanBoard, document: Id<"documents">) => {
-  for (let e of content) {
-    for (let d of e.content) {
-      if (d._id === document) {
-        return d;
-      }
-    }
-  }
-  return undefined;
 }
