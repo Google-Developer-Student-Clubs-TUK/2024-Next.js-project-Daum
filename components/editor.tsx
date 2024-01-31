@@ -36,7 +36,7 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
 
     blockSpecs: {
       ...defaultBlockSpecs,
-      checkbox: CheckBoxBlockSpec,
+      checkboxListItem: CheckBoxBlockSpec,
     },
     slashMenuItems: [
       ...getDefaultReactSlashMenuItems(),
