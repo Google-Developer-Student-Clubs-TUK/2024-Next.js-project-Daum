@@ -12,6 +12,7 @@ import { useTheme } from "next-themes";
 import { KanbanBoardDocument } from "@/types/kanbanboard";
 import { ElementRef, useRef } from "react";
 import { toast } from "sonner";
+import { BoardDocumentTitle } from "./board-document-title";
 
 export const BoardDocument = ({
   _id,
@@ -115,15 +116,10 @@ export const BoardDocument = ({
     >
       <div className="flex justify-between">
         <div className="m-2 flex">
-          <Link
-            href={`/documents/${document._id}`}
-            className="">
-              {document.icon ? (
-                <p className="mr-2 text-[18px]">{document.icon}</p>
-              ) : (
-                <File className="mr-2 h-4 w-4" />
-              )}
-          </Link>
+          <BoardDocumentTitle
+            document={document}
+            preview={!editable}
+          />
           <div className="text-foreground">
             {document.title}
           </div>
