@@ -14,10 +14,12 @@ export type KanbanBoardDocument = {
   _id: Id<"documents">,
 
   color?: { light: string, dark: string },
+  priority?: 1 | 2 | 3,
+  memo?: string,
 };
 
 
-export const newKanbanBoard = (
+export const createNewKanbanBoard = (
   ...names: string[]
 ):
 KanbanBoard => {

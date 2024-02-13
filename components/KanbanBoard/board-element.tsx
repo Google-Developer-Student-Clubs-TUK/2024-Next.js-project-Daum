@@ -4,15 +4,21 @@ import React, { ElementRef, useRef, useState } from "react";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { KanbanBoardProps } from "@/hooks/use-kanban-board";
 import TextareaAutoSize from "react-textarea-autosize";
-
-import { cn } from "@/lib/utils";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Button } from "./ui/button";
-import { Plus, Search, Settings, Trash } from "lucide-react";
-import { BoardDocument } from "./board-document";
-import { Input } from "./ui/input";
-import { KanbanBoardDocument, KanbanBoardElement } from "@/types/kanbanboard";
+import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+
+import { useMutation } from "convex/react";
+import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Plus, Settings, Trash } from "lucide-react";
+import { BoardDocument } from "@/components/KanbanBoard/board-document";
+import { KanbanBoardDocument, KanbanBoardElement } from "@/components/KanbanBoard/kanbanboard.types";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
+import { SearchOrCreateDocumentCommand } from "@/app/(main)/_components/KanbanBoard/search-or-create-document-command";
+import { ArrayDragSpace } from "../array-drag-space";
+import { BoardColorPicker } from "@/app/(main)/_components/KanbanBoard/board-color-picker";
 
 export const BoardElement = ({
   editor,
@@ -36,13 +42,10 @@ export const BoardElement = ({
   const rootRef = useRef<ElementRef<"div">>(null);
   const inputRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const create = useMutation(api.documents.create);
+  const router = useRouter();
 
-  const [search, setSearch] = useState("");
   const [dragSelected, setDragSelected] = useState<number | undefined>(undefined);
-
-  const filteredDocuments = documents?.filter((document) => {
-    return document.title.toLowerCase().includes(search.toLowerCase());
-  })
 
   const contentDocuments = content.map(c =>
     documents !== undefined ? { board: c, doc: documents.filter(d => d._id === c._id)[0]} : undefined
@@ -51,8 +54,7 @@ export const BoardElement = ({
   const {
     onRenameElement,
     onRemoveElement,
-    onMoveElement,
-    onElementSetColor,
+    onElementSetAttribute,
 
     onAddDocument,
     onMoveDocument: onAddDocumentIndex,
@@ -159,6 +161,19 @@ export const BoardElement = ({
     }
   }
 
+  const appendNewDocument = () => {
+    const promise = create({ title: "Untitled" }).then((documentId) => {
+      onAddDocument(_id, documentId as Id<"documents">);
+      router.push(`/documents/${documentId}`);
+    });
+
+    toast.promise(promise, {
+      loading: "Creating a new note...",
+      success: "New note created!",
+      error: "Failed to create a new note.",
+    });
+  }
+
   return (
     <div
       ref={rootRef}
@@ -223,22 +238,11 @@ export const BoardElement = ({
                   Delete
                 </Button>
               </div>
-              <div className="p-1 flex justify-around">
-                {colors.map(c => (
-                  <div
-                    key={c.light}
-                    role="button"
-                    className={cn(
-                      "h-4 w-4 rounded-sm",
-                      color?.light === c.light && "border-2 border-neutral-500 dark:border-neutral-400"
-                    )}
-                    style={{
-                      backgroundColor: resolvedTheme === "dark" ? c.dark : c.light
-                    }}
-                    onClick={() => onElementSetColor(_id, c)}
-                  />
-                ))}
-              </div>
+              <BoardColorPicker
+                colors={colors}
+                currentColor={color}
+                onChangeColor={(c) => onElementSetAttribute(_id, { color: c})}
+              />
             </PopoverContent>
           </Popover>
           <Popover>
@@ -255,71 +259,39 @@ export const BoardElement = ({
               className="p-0 w-48"
               side="bottom"
             >
-              <div className="flex items-center gap-x-1 p-2">
-                <Search className="h-4 w-4" />
-                <Input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="h-7 px-2 focus-visible:ring-transparent bg-secondary"
-                  placeholder="Filter by title..."
-                />
-              </div>
-              <div className="m-2">
-                <p className="hidden last:block text-xs text-center text-muted-foreground pb-2">
-                  No documents found.
-                </p>
-                {filteredDocuments?.map((document) => (
-                  <div
-                    role="button"
-                    className="flex text-sm rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600 text-nowrap text-ellipsis overflow-hidden"
-                    key={document._id}
-                    onClick={() => onAddDocument(_id, document._id)}
-                  >
-                      {document.icon && (
-                        <div className="shrink-0 mr-2 text-[18px]">{document.icon}</div>
-                      )}
-                      {document.title}
-                  </div>
-                ))}
-              </div>
+              <SearchOrCreateDocumentCommand
+                documents={documents}
+                createNewDocument={() => appendNewDocument()}
+                selectDocument={id => onAddDocument(_id, id)}
+              />
             </PopoverContent>
           </Popover>
         </div>
       </div>
       <div className="flex flex-col min-h-64">
-        {contentDocuments.length > 0 ? contentDocuments.map((document, i) => (
-          <React.Fragment
-            key={document.board._id}
-          >
-            <div 
-              className={cn(
-                "h-2 w-full rounded-md",
-                dragSelected === i && "bg-blue-400/75"
-              )}
-              onDragOver={(e) => onDocumentIndexDragOver(e, i)}
-            />
+        {contentDocuments.length > 0 ? (
+          <ArrayDragSpace
+          index={dragSelected ?? -1}
+          direction="y"
+          onDragToIndex={(e, i) => onDocumentIndexDragOver(e, i)}
+          onDragToLast={(e) => onDocumentIndexDragOver(e, contentDocuments.length)}
+        >
+          {contentDocuments.map((document, i) => (
             <BoardDocument
+              key={document.board._id}
               boardDocument={document.board}
-              _id={_id}
               document={document.doc}
               editable={editable}
               editor={editor}
               onDragChange={(status) => onDocumentDragOver(status, i)}
             />
-          </React.Fragment>
-        )) : (
+          ))}
+        </ArrayDragSpace>
+        ) : (
           <div className="flex flex-col items-center justify-center w-full text-muted-foreground">
             No documents.
           </div>
         )}
-        <div 
-          className={cn(
-            "h-2 w-full rounded-md",
-            dragSelected === contentDocuments.length && "bg-blue-400/75",
-            contentDocuments.length === 0 && "hidden",
-          )}
-          onDragOver={(e) => onDocumentIndexDragOver(e, contentDocuments.length)}
-        />
       </div>
     </div>
   )
