@@ -28,7 +28,6 @@ export const BoardDocument = ({
   },
   onDragChange,
 }: {
-  _id: string,
   boardDocument: KanbanBoardDocument,
   document: Doc<"documents">,
   editable?: boolean,
