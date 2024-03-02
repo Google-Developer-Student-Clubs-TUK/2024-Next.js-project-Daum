@@ -7,6 +7,7 @@ export default defineSchema({
     isArchived: v.boolean(),
     parentDocument: v.optional(v.id("documents")),
     content: v.optional(v.string()),
+    summary: v.optional(v.string()),
     coverImage: v.optional(v.string()),
     icon: v.optional(v.string()),
     isPublished: v.boolean(),
@@ -17,11 +18,10 @@ export default defineSchema({
   calendars: defineTable({
     title: v.string(),
     userId: v.string(),
-    newCalendar: v.optional(v.id("calendars")),
     icon: v.optional(v.string()),
     isArchived: v.boolean(),
-    isPublished: v.boolean(),
     content: v.optional(v.string()),
+    isPublished: v.boolean(),
   }).index("by_user", ["userId"]),
 
   boards: defineTable({
