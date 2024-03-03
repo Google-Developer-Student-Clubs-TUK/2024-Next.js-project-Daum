@@ -23,6 +23,8 @@ https://www.youtube.com/watch?v=eIh1kZjMEyg
   <img src="https://img.shields.io/badge/chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white">  
   <img src="https://img.shields.io/badge/clerk-6C47FF?style=for-the-badge&logo=clerk&logoColor=white">  
   <img src="https://img.shields.io/badge/vscode-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="icon" /> 
+  <img src="https://img.shields.io/badge/datefns-770C56?style=for-the-badge&logo=datefns&logoColor=white" alt="icon" /> 
+  <img src="https://img.shields.io/badge/shadcn/ui-000000?style=for-the-badge&logo=shadcnui&logoColor=white" alt="icon" /> 
 </p>
 
 # 💡 Getting Started
