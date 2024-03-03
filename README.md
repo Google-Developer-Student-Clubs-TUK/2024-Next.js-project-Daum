@@ -1,6 +1,6 @@
 # 💻 Project Name
 ![daum-high-resolution-logo](https://github.com/Google-Developer-Student-Clubs-TUK/2024-Next.js-project-Daum/assets/127572801/cca04145-0b5b-45b6-b98f-ba4d5de5c6d3)
-<b>우리만의 Notion 만들기 프로젝트 입니다</b>
+<b>우리만의 Notion 만들기 프로젝트 입니다😊</b>
 
 # 🎥 Demo
 https://www.youtube.com/watch?v=eIh1kZjMEyg
