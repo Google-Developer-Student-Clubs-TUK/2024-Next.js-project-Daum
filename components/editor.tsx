@@ -17,6 +17,7 @@ import {
 // import { chartBlock, insertChartBlock } from "./blocks/chart";
 import { insertPieChartBlock, piechartBlock } from "./blocks/PieChart";
 import { guestbookBlockSpec, insertGuestBookBlock } from "./blocks/guestbook";
+import { piechart } from "./blocks/PieChratComponent";
 
 interface EditorProps {
   onChange: (value: string) => void;
@@ -47,6 +48,7 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
     blockSpecs: {
       ...defaultBlockSpecs,
       checkboxListItem: CheckBoxBlockSpec,
+      piechart: piechart,
       chart: piechartBlock,
       guestbook: guestbookBlockSpec,
     },
