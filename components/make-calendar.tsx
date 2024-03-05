@@ -39,9 +39,10 @@ const MakeCalendar = ({ initialContent, onChange }: CalendarProps) => {
   });
 
   const handleCalendarDocument = (index: number) => {
-    const newClickedButtonState = !clickedButton;
-    setClickedButton(newClickedButtonState);
-    if (newClickedButtonState) {
+    if (!clickedButton) {
+      setClickedButton(true);
+      editor.onNewElement(index, getMonth(currentDate) + 1);
+    } else {
       editor.onNewElement(index, getMonth(currentDate) + 1);
     }
   };
