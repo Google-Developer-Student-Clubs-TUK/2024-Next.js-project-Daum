@@ -1,11 +1,17 @@
 # 💻 Project Name
 ![daum-high-resolution-logo](https://github.com/Google-Developer-Student-Clubs-TUK/2024-Next.js-project-Daum/assets/127572801/cca04145-0b5b-45b6-b98f-ba4d5de5c6d3)
-<b>우리만의 Notion 만들기 프로젝트 입니다</b>
+<b>우리만의 Notion 만들기 프로젝트 입니다😊</b>
+
+# 🎥 Demo
+https://www.youtube.com/watch?v=eIh1kZjMEyg
+
+# 📚 Presentation
+[Daum.pdf](https://github.com/Google-Developer-Student-Clubs-TUK/2024-Next.js-project-Daum/files/14472263/Daum.pdf)
 
 # 📝 Function
+- <b> Clerk 로그인 기능 </b>
 - <b> 차트 기능 </b>
 - <b> 캘린더 기능 </b>
-- <b> 방명록 기능 </b>
 - <b> 칸반보드 기능 </b>
 - <b> ChatGPT AI 기능 </b>
 
@@ -17,6 +23,8 @@
   <img src="https://img.shields.io/badge/chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white">  
   <img src="https://img.shields.io/badge/clerk-6C47FF?style=for-the-badge&logo=clerk&logoColor=white">  
   <img src="https://img.shields.io/badge/vscode-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="icon" /> 
+  <img src="https://img.shields.io/badge/datefns-770C56?style=for-the-badge&logo=datefns&logoColor=white" alt="icon" /> 
+  <img src="https://img.shields.io/badge/shadcn/ui-000000?style=for-the-badge&logo=shadcnui&logoColor=white" alt="icon" /> 
 </p>
 
 # 💡 Getting Started
