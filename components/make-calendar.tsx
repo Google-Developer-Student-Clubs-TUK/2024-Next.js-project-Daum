@@ -1,4 +1,5 @@
 "use client";
+
 import styles from "./Calendar.module.scss";
 import { ChevronRightIcon, ChevronLeftIcon } from "@radix-ui/react-icons";
 import { use, useCallback, useMemo, useState } from "react";
@@ -38,8 +39,9 @@ const MakeCalendar = ({ initialContent, onChange }: CalendarProps) => {
   });
 
   const handleCalendarDocument = (index: number) => {
-    setClickedButton(clickedButton === false ? true : clickedButton);
-    if (clickedButton) {
+    const newClickedButtonState = !clickedButton;
+    setClickedButton(newClickedButtonState);
+    if (newClickedButtonState) {
       editor.onNewElement(index, getMonth(currentDate) + 1);
     }
   };
