@@ -15,6 +15,7 @@ import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useMutation } from "convex/react";
 import { LucideIcon, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 
 interface CalendarItemProps {
@@ -46,6 +47,9 @@ export const CalendarItem = ({
   const { user } = useUser();
   const router = useRouter();
   const archive = useMutation(api.calendars.archive);
+  const updateTitle = useMutation(api.calendars.update);
+  const editableRef = useRef<HTMLDivElement>(null);
+  const [isEditable, setIsEditable] = useState<boolean>(false);
 
   const onArchive = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
@@ -59,11 +63,39 @@ export const CalendarItem = ({
     });
   };
 
+  const onUpdate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    event.stopPropagation();
+    // Focus on the editable element
+    setIsEditable(true);
+    if (editableRef.current) {
+      editableRef.current.focus();
+    }
+  };
+
   const handleExpand = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     event.stopPropagation();
     onExpand?.();
+  };
+
+  const handleKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // 엔터 입력 시 줄바꿈 방지
+      if (editableRef.current) {
+        editableRef.current.blur(); // 포커스 제거
+      }
+    }
+  };
+
+  const handleBlur = async () => {
+    if (editableRef.current && id) {
+      const newTitle = editableRef.current.innerText;
+      // Convex 서버에 새로운 제목을 업데이트
+      await updateTitle({ id, title: newTitle });
+      setIsEditable(false);
+      toast.success("Title updated successfully!");
+    }
   };
 
   return (
@@ -87,7 +119,16 @@ export const CalendarItem = ({
         />
       )}
 
-      <span className="truncate">{label}</span>
+      <div
+        ref={editableRef}
+        contentEditable={isEditable}
+        suppressContentEditableWarning={true}
+        className="truncate outline-none"
+        onKeyDown={handleKeyDown}
+        onBlur={handleBlur}
+      >
+        {label}
+      </div>
       {isSearch && (
         <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
           <span className="text-xs">⌘</span>
@@ -115,6 +156,10 @@ export const CalendarItem = ({
                 Delete
               </DropdownMenuItem>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={onUpdate}>
+                <Trash className="h-4 w-4 mr-2" />
+                Update
+              </DropdownMenuItem>
               <div className="text-xs text-muted-foreground p-2">
                 Last edited by: {user?.fullName}
               </div>

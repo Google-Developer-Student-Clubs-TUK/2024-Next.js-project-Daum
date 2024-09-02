@@ -1,25 +1,23 @@
 "use client";
 
-import styles from "./Calendar.module.scss";
-import { ChevronRightIcon, ChevronLeftIcon } from "@radix-ui/react-icons";
-import { use, useCallback, useMemo, useState } from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import {
-  format,
-  addMonths,
-  subMonths,
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
   addDays,
+  addMonths,
   differenceInCalendarDays,
+  endOfMonth,
+  endOfWeek,
+  format,
   getMonth,
-  isSaturday,
-  isSunday,
+  startOfMonth,
+  startOfWeek,
+  subMonths,
 } from "date-fns";
+import { useCallback, useMemo, useState } from "react";
+import styles from "./Calendar.module.scss";
 
-import { CalendarDay } from "./calendar-day";
 import { useCalendarDocument } from "@/hooks/use-calendar-document";
+import { CalendarDay } from "./calendar-day";
 
 interface CalendarProps {
   initialContent?: string;
