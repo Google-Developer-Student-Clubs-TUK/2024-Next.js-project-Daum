@@ -65,7 +65,6 @@ export const CalendarItem = ({
 
   const onUpdate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();
-    // Focus on the editable element
     setIsEditable(true);
     if (editableRef.current) {
       editableRef.current.focus();
