@@ -7,13 +7,6 @@ export type CalendarDocumentElement = {
   calendarMonth: number;
 };
 
-//calendar에 들어갈 내용
-export type CalendarDocument = {
-  _id: string;
-  name?: string;
-  content?: [];
-};
-
 export const newCalendarDocument = (...names: string[]): Calendar => {
   return names.map((v) => {
     const currentDate = new Date();
