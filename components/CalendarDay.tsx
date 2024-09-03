@@ -2,13 +2,12 @@
 
 import styles from "./Calendar.module.scss";
 
-import { format, getMonth, isSaturday, isSunday, set } from "date-fns";
-import { Trash2, PlusCircle } from "lucide-react";
-import { CalendarDocumentElement } from "@/types/calendar";
-import { ElementRef, useRef, useState } from "react";
 import { CalendarDocumentProps } from "@/hooks/use-calendar-document";
+import { CalendarDocumentElement } from "@/types/calendar";
+import { format, getMonth, isSaturday, isSunday } from "date-fns";
+import { PlusCircle, Trash2 } from "lucide-react";
+import { ElementRef, useRef, useState } from "react";
 import TextareaAutoSize from "react-textarea-autosize";
-import { Id } from "@/convex/_generated/dataModel";
 
 export const CalendarDay = ({
   day: v,
@@ -103,7 +102,7 @@ export const CalendarDay = ({
             v.calendarMonth === Number(format(currentDate, "M")) && (
               <div
                 key={v._id}
-                className="w-80% h-6 hover:bg-gray-400 border-blue-500 border-1 bg-[#DDE5FF] rounded-md flex flex-row justify-center items-center mt-2 mx-5"
+                className="w-80% h-auto p-1 text-sm border-blue-500 border-1 bg-[#DDE5FF] rounded-md flex flex-row justify-center items-center mt-1 mx-5"
               >
                 <TextareaAutoSize
                   onClick={(e) => {
@@ -123,8 +122,11 @@ export const CalendarDay = ({
                       disableInput(e);
                     }
                   }}
-                  className="w-full h-full bg-[#DDE5FF] text-center rounded-md"
+                  className="w-full h-full bg-[#DDE5FF] text-center rounded-md outline-none"
                   onChange={(e) => documentclick(v._id, e.target.value)}
+                  style={{
+                    transition: "background-color 0.3s ease-in-out",
+                  }}
                 >
                   {v.name}
                 </TextareaAutoSize>
