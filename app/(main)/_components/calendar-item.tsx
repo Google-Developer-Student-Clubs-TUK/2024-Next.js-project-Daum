@@ -72,13 +72,6 @@ export const CalendarItem = ({
     }
   };
 
-  const handleExpand = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
-    event.stopPropagation();
-    onExpand?.();
-  };
-
   const handleKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
       event.preventDefault(); // 엔터 입력 시 줄바꿈 방지
@@ -123,7 +116,11 @@ export const CalendarItem = ({
         ref={editableRef}
         contentEditable={isEditable}
         suppressContentEditableWarning={true}
-        className="truncate outline-none"
+        className={`truncate ${
+          isEditable
+            ? "border-b-2 border-blue-500 outline-none transition-all duration-300 ease-in-out"
+            : "outline-none transition-all duration-300 ease-in-out"
+        }`}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
       >
