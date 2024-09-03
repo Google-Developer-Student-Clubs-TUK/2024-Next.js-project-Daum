@@ -3,7 +3,6 @@ export type Calendar = CalendarDocumentElement[];
 export type CalendarDocumentElement = {
   _id: string;
   name: string;
-  content: CalendarDocument[];
   calendarIndex: number;
   calendarMonth: number;
 };
@@ -23,7 +22,6 @@ export const newCalendarDocument = (...names: string[]): Calendar => {
     return {
       _id: generateId(),
       name: v,
-      content: [],
       calendarIndex: +v,
       calendarMonth: +formattedDate,
     };
