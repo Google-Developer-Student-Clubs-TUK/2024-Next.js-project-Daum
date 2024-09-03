@@ -17,7 +17,7 @@ import { useCallback, useMemo, useState } from "react";
 import styles from "./Calendar.module.scss";
 
 import { useCalendarDocument } from "@/hooks/use-calendar-document";
-import { CalendarDay } from "./calendar-day";
+import { CalendarDay } from "./CalendarDay";
 
 interface CalendarProps {
   initialContent?: string;
