@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/clerk-react";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { useMutation } from "convex/react";
-import { LucideIcon, MoreHorizontal, Trash } from "lucide-react";
+import { Edit, LucideIcon, MoreHorizontal, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -149,12 +149,12 @@ export const CalendarItem = ({
               forceMount
             >
               <DropdownMenuItem onClick={onArchive}>
-                <Trash className="h-4 w-4 mr-2" />
+                <Trash className="w-4 h-4 mr-2" />
                 Delete
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={onUpdate}>
-                <Trash className="h-4 w-4 mr-2" />
+                <Edit className="w-4 h-4 mr-2" />
                 Update
               </DropdownMenuItem>
               <div className="text-xs text-muted-foreground p-2">

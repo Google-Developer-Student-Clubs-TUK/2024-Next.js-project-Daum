@@ -6,7 +6,7 @@ import { CalendarDocumentProps } from "@/hooks/use-calendar-document";
 import { CalendarDocumentElement } from "@/types/calendar";
 import { format, getMonth, isSaturday, isSunday } from "date-fns";
 import { PlusCircle, Trash2 } from "lucide-react";
-import { ElementRef, useRef, useState } from "react";
+import { useState } from "react";
 import TextareaAutoSize from "react-textarea-autosize";
 
 export const CalendarDay = ({
@@ -31,7 +31,6 @@ export const CalendarDay = ({
   content?: CalendarDocumentElement[];
   editor: CalendarDocumentProps;
 }) => {
-  const inputRef = useRef<ElementRef<"textarea">>(null);
   let style;
   const validation = getMonth(currentDate) === getMonth(v);
   const today = format(new Date(), "yyyyMMdd") === format(v, "yyyyMMdd");
