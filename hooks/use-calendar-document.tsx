@@ -5,7 +5,7 @@ export interface CalendarDocumentProps {
   onNewElement: (calendarId: number, calendarMonth: number) => void;
   onDeleteElement: (calendarDocId: string) => void;
   content: Calendar | undefined;
-  onRenameElement: (id: string, name: string) => void;
+  onRenameElement: (calendarDocId: string, name: string) => void;
 }
 
 export const useCalendarDocument = ({
@@ -48,8 +48,10 @@ export const useCalendarDocument = ({
     setContent(content?.filter((a) => a._id !== calendarDocId));
   };
 
-  const onRenameElement = (id: string, name: string) => {
-    setContent(content?.map((a) => (a._id === id ? { ...a, name } : a)));
+  const onRenameElement = (calendarDocId: string, name: string) => {
+    setContent(
+      content?.map((a) => (a._id === calendarDocId ? { ...a, name } : a))
+    );
   };
 
   return {
