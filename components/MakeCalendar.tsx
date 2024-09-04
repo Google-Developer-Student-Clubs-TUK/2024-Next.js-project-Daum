@@ -31,7 +31,7 @@ const MakeCalendar = ({ initialContent, onChange }: CalendarProps) => {
   //const createCalendarDocument = useMutation(api.calendars.update);
   const editor = useCalendarDocument({
     initialContent: initialContent ? JSON.parse(initialContent) : undefined,
-    onBoardChanged: (calendar) => {
+    onCalendarChanged: (calendar) => {
       onChange(JSON.stringify(calendar, null, 2));
     },
   });

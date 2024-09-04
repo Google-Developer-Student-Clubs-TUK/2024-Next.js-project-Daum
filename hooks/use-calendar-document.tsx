@@ -10,10 +10,10 @@ export interface CalendarDocumentProps {
 
 export const useCalendarDocument = ({
   initialContent,
-  onBoardChanged,
+  onCalendarChanged,
 }: {
   initialContent?: Calendar | undefined;
-  onBoardChanged: (value: Calendar) => void;
+  onCalendarChanged: (value: Calendar) => void;
 }): CalendarDocumentProps => {
   const [content, setContent] = useState(initialContent);
 
@@ -25,9 +25,9 @@ export const useCalendarDocument = ({
 
   useEffect(() => {
     if (!!content) {
-      onBoardChanged(content);
+      onCalendarChanged(content);
     }
-  }, [content, onBoardChanged]);
+  }, [content, onCalendarChanged]);
 
   const onNewElement = (calendarId: number, calendarMonth: number) => {
     if (!content) return;
