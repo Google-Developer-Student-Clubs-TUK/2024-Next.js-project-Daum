@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery } from "convex/react";
 
-import { Cover } from "@/components/cover";
+import styles from "@/components/Calendar.module.scss";
 import MakeCalendar from "@/components/MakeCalendar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
@@ -31,17 +31,33 @@ const CalendarIdPage = ({ params }: CalendarIdPageProps) => {
 
   if (calendar === undefined) {
     return (
-      <div>
-        <Cover.Skeleton />
-        <div className="md:max-w-3xl lg:max-w-4xl mx-auto mt-10">
-          <div className="space-y-4 pl-8 pt-4">
-            <Skeleton className="h-14 w-[50%]" />
-            <Skeleton className="h-4 w-[80%]" />
-            <Skeleton className="h-4 w-[40%]" />
-            <Skeleton className="h-4 w-[60%]" />
-          </div>
+      <section className={styles.calendar}>
+        {/* 스켈레톤으로 연도 */}
+        <div className={styles.yearTitle}>
+          <Skeleton className="h-5 w-24" />
         </div>
-      </div>
+        <div className={styles.monthTitle}>
+          {/* 좌우 버튼 대신 그냥 네모 스켈레톤 */}
+          <Skeleton className="h-6 w-6 mr-2 inline-block" />
+          <Skeleton className="h-6 w-8 inline-block" />
+          <Skeleton className="h-6 w-6 ml-2 inline-block" />
+        </div>
+
+        {/* 날짜칸(한 달 최대 5~6주 -> 35~42칸 정도) */}
+        <div className={styles.dateContainer}>
+          {Array.from({ length: 42 }).map((_, i) => (
+            <div
+              key={i}
+              className={styles.currentMonth}
+              style={{ minHeight: "80px", padding: "4px" }}
+            >
+              <Skeleton className="h-4 w-6 mb-2" />
+              <Skeleton className="h-4 w-[70%] mb-1" />
+              <Skeleton className="h-4 w-[50%] mb-1" />
+            </div>
+          ))}
+        </div>
+      </section>
     );
   }
 
